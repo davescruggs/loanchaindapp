@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import './App.css';
-import NewApplicant from './modules/new-applicant';
+import NewApplicant from './modules/new-applicant-1';
 
 class App extends Component {
   render() {
@@ -17,8 +17,8 @@ class App extends Component {
 
         <BrowserRouter>
             <Switch>
-                <Route exact path='/' component = { NewApplicant } />
-                <Route exact path='/applicant' component = { NewApplicant } />
+                <Route exact path = '/' component = { NewApplicant } />
+                <Route exact path = '/applicant' component = { NewApplicant } />
             </Switch>
         </BrowserRouter>
 
