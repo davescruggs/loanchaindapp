@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
-import { web3, web3Connection, web3Manager } from '../../web3';
+import React, { Component } from 'react';
 import AMNewContract from '../resource/am-new-contract.sol';
+import { web3, web3Connection } from '../../web3';
 import _ from 'lodash';
 import loader from '../img/tenor.gif';
 
-class ContractNew extends Component {
+class NewApplicant extends Component {
 
     constructor(props) {
 
@@ -15,19 +15,20 @@ class ContractNew extends Component {
             amNewContract: undefined,
             statusMessage: 'Connecting to block chain plese wait...',
             thisTxHash: undefined,
-            isCompileError: false,
             contractABI: undefined,
             thisAddress: undefined,
             connected: undefined,
-            result: undefined,
             isDeployInProgress: undefined,
-            showABI: false
+            showABI: false,
+            make: 'Honda',
+            model: 'CRV',
+            year: '2010',
+            price: '7500',
+            vin: 'some vin number'
         }
 
-        this.compileContract = this.compileContract.bind(this);
-        this.deployContract = this.deployContract.bind(this);
+        this.compileAndDeployCarContract = this.compileAndDeployCarContract.bind(this);
         this.toogleABI = this.toogleABI.bind(this);
-        this.manageMiner = this.manageMiner.bind(this);
 
     }
 
@@ -41,21 +42,6 @@ class ContractNew extends Component {
 
         this.web3ConnectionWatch();
 
-    }
-
-    readAMNewContract(contractFile) {
-        const rawFile = new XMLHttpRequest();
-        rawFile.open('GET', contractFile, false);
-        rawFile.onreadystatechange = () => {
-            if(rawFile.readyState === 4) {
-                if(rawFile.status === 200 || rawFile.status === 0) {
-                    this.setState({
-                        amNewContract: rawFile.responseText
-                    });
-                }
-            }
-        }
-        rawFile.send(null);
     }
 
     web3ConnectionWatch() {
@@ -108,67 +94,40 @@ class ContractNew extends Component {
         }, 1000);
     }
 
-    compileContract() {
+    compileAndDeployCarContract() {
         
         const optimize = 1,
-            compiler = this.compiler;
+            compiler = this.compiler,
+            { make, model, year, price, vin } = this.state;
 
         console.log('Compile And Deploy started');
         
         this.setState({
-            statusMessage: 'Compiling contract',          
+            statusMessage: 'Compiling and deploying car contract',
             isDeployInProgress: true
         });
-
     
-        return setTimeout(() => {
+        var result = compiler.compile(this.amNewConctract(), optimize);
+
+        if(result.errors && JSON.stringify(result.errors).match(/error/i)) {
             
-            const result = compiler.compile(this.amNewContract(), optimize);
+            this.setState({
+                statusMessage: JSON.stringify(result.errors)
+            });
 
-                if(result.errors && JSON.stringify(result.errors).match(/error/i)) {
-                    
-                    this.setState({
-                        statusMessage: JSON.stringify(result.errors),
-                        isDeployInProgress: false,
-                        isCompileError: true
-                    });
-        
-                } else {
+            return false;
+        } 
 
-                    this.setState({
-                        result,
-                        statusMessage: 'Compilation done successfully',
-                        contractName: Object.keys(result.contracts)[0],
-                        isDeployInProgress: false,
-                        isCompileError: false
-                    });
-                }             
-        }, 1000);
-
-
-    }
-
-    deployContract() {
-        
-        const { result, contractName } = this.state;
-
-        this.setState({
-            contractABI: undefined,
-            showABI: false
+        this.getGasPriceAndEstimate(result, (err, gasPrice, gasEstimate) => {
+            this.deployCarContract(result, gasPrice, gasEstimate, make, model, year, price, vin);
         });
 
-        this.getGasPriceAndEstimate(result, contractName, (err, gasPrice, gasEstimate) => {
-            this.deployNewContract(result, contractName, gasPrice, gasEstimate);
-        });
-
+        return true;
     }
 
-    getGasPriceAndEstimate(result, contractName, callBackGasPriceAndEstimate) {
+    getGasPriceAndEstimate(result, callBackGasPriceAndEstimate) {
 
-        console.log('Contracts', result.contracts);
-        console.log('Contract Name', result.contractName);
-        console.log('Get price', result.contracts[contractName]);
-        const bytecode = '0x' + result.contracts[contractName].bytecode;
+        const bytecode = '0x' + result.contracts[':Car'].bytecode;
 
         web3.eth.getGasPrice((err, gasPrice) => {                
         
@@ -209,14 +168,14 @@ class ContractNew extends Component {
         });        
     }
 
-    deployNewContract(result, contractName, gasPrice, gasEstimate) {
+    deployCarContract(result, gasPrice, gasEstimate, make, model, year, price, vin) {
 
-        const newContract = result.contracts[contractName],
-            abi = JSON.parse(newContract.interface),
-            bytecode = '0x' + newContract.bytecode,
+        const carContract = result.contracts[':Car'],
+            abi = JSON.parse(carContract.interface),
+            bytecode = '0x' + carContract.bytecode,
             myContract = web3.eth.contract(abi);
 
-        console.log('newContract', newContract);              
+        console.log('carContract', carContract);              
         console.log('bytecode', JSON.stringify(bytecode));
         console.log('abi', JSON.stringify(abi));
         console.log('myContract', myContract);
@@ -229,7 +188,8 @@ class ContractNew extends Component {
             statusMessage: warnings + 'Compiled! (inflated) estimateGas amount: ' + inflatedGasCost + ' (' + ethCost+ ' Ether)'
         });
 
-        myContract.new({from:web3.eth.accounts[0],data:bytecode,gas:inflatedGasCost}, 
+        myContract.new(make, model, year, price, vin, web3.eth.accounts[0], 
+            {from:web3.eth.accounts[0],data:bytecode,gas:inflatedGasCost}, 
             (err, newContract) => { 
 
                 console.log('newContract', newContract);
@@ -260,6 +220,7 @@ class ContractNew extends Component {
 
                         console.log('Contract mined! Address', newContract.address);
                         console.log('newContract Mined', newContract);
+                        console.log('Car Details', newContract.carDetails());
                         this.setState({
                             statusMessage: 'Contract deployed successfully !!! ',
                             isDeployInProgress: false,
@@ -274,17 +235,22 @@ class ContractNew extends Component {
         );
     }
 
-
-    getContractOptions() {
-        const { result } = this.state;
-
-        return result ? Object.keys(result.contracts).map((key) => {
-            return <option key = { key } value = { key }> { key } </option>
-        }) : null;
+    readAMNewContract(contractFile) {
+        const rawFile = new XMLHttpRequest();
+        rawFile.open('GET', contractFile, false);
+        rawFile.onreadystatechange = () => {
+            if(rawFile.readyState === 4) {
+                if(rawFile.status === 200 || rawFile.status === 0) {
+                    this.setState({
+                        amNewContract: rawFile.responseText
+                    });
+                }
+            }
+        }
+        rawFile.send(null);
     }
 
-
-    amNewContract() {
+    amNewConctract() {
         return this.state.amNewContract;
     }
 
@@ -298,20 +264,17 @@ class ContractNew extends Component {
         })
     }
 
-    onFormDataChange(field, { target }) {
+    onCarDataChange(field, { target }) {
         const { value } = target,   
-            { amNewContract } = { ...this.state },
-            updateState = { amNewContract };
+            { make, model, year, price, vin } = { ...this.state },
+            updateState = {make, model, year, price, vin};
 
         updateState[field] = value;
 
-        this.setState(updateState);       
-    }
+        updateState.year = (parseInt(updateState.year, 10) || 0).toString();
+        updateState.price = parseInt(updateState.price, 10) || 0;
 
-    manageMiner(start) {
-        console.log(web3Manager);
-        console.log(web3);
-        web3Manager.miner.start();
+        this.setState(updateState);       
     }
     
     render() {
@@ -321,50 +284,42 @@ class ContractNew extends Component {
             statusMessage,
             thisAddress,
             contractABI,
-            isCompileError,
             showABI,
             isDeployInProgress,
-            amNewContract,
-            contractName,
-            result
+            make, model, year, price, vin
         } = this.state;
 
         return (
         <div>
             {(readyToCompileAndCreateContract && web3.isConnected()) && <div>
 
-                <div className = "container">
-                    <div className = "row">
+                <div class = "container">
+                    <div class = "row">
                         <h3>Deploy smart contract</h3> <br />
                         <div className = "col-sm-6">
-                            <div className="form-group">
+                            <div class="form-group">
 
-                                <label>Contract { contractName } </label>
+                                <label>Make</label>
+                                <input type = "text"  class = "form-control" value = { make } onChange = { this.onCarDataChange.bind(this, 'make') } /> <br />
+                                
+                                <label>Model</label>
+                                <input type = "text" class = "form-control"  value = { model } onChange = { this.onCarDataChange.bind(this, 'model') } /> <br />
 
-                                <textarea className = "form-control" rows = "21" value = { amNewContract } onChange = { this.onFormDataChange.bind(this, 'amNewContract') } />
+                                <label>Year</label>
+                                <input type = "text"  class = "form-control" value = { year } onChange = { this.onCarDataChange.bind(this, 'year') } /> <br />
 
-                                <br />
+                                <label>Price</label>
+                                <input type = "text" class = "form-control" value = { price } onChange = { this.onCarDataChange.bind(this, 'price') } /> <br />
 
-                                {!result && <input type = "button" className = "btn btn-primary" value = "Compile Contract" onClick = { this.compileContract } />}
+                                <label>VIN</label>
+                                <input type = "text" class = "form-control" value = { vin } onChange = { this.onCarDataChange.bind(this, 'vin') } /> <br />
 
-                                {result && <div>
-                                    
-                                    <input type = "button" className = "btn btn-primary" value = "Compile Contract" onClick = { this.compileContract } />
-                                    &nbsp;&nbsp;&nbsp; Select contract &nbsp;
-                                    <select value = { contractName } onChange = { this.onFormDataChange.bind(this, 'contractName') }>
-                                        {this.getContractOptions()}
-                                    </select>
-                                    &nbsp;&nbsp;
-                                    <input type = "button" className = "btn btn-primary" value = "Deploy Contract" onClick = { this.deployContract } />
-                                </div>}
+                                <input type = "button" className = "btn btn-primary" value = "Deploy Contract" onClick = { this.compileAndDeployCarContract } />
                             </div>
                         </div>
                         <div className = "col-sm-6">
 
-                            {isDeployInProgress && <div>
-                                <h3>{statusMessage}</h3>
-                                <img src = {loader} alt = "" />
-                            </div>}
+                            {isDeployInProgress && <img src = {loader} alt = "" />}
 
                             {isDeployInProgress === false && <div>
                                 <span className = "label-pill label-success">
@@ -373,17 +328,19 @@ class ContractNew extends Component {
                                     </h3>
                                 </span>
 
-                                {(isCompileError === false && thisAddress) && <span className = "badge badge-danger" data-toggle = "collapse" data-target = "#showabi">
+                                <span className = "badge badge-danger" data-toggle = "collapse" data-target = "#showabi">
                                     <h4>
-                                        {thisAddress}
+                                        {thisAddress && thisAddress}
                                     </h4>
-                                </span>}<br /><br />                                
+                                </span><br /><br />
 
                                 {contractABI && <button type = "button" className = "btn btn-primary" onClick = {this.toogleABI}>{showABI && "Hide ABI"}{!showABI && "Show ABI"}</button>}
                                 
                                 <br /><br />
 
-                                {showABI && <textarea className = "form-control" readOnly value = {JSON.stringify(contractABI, 4)} rows = "9" />}
+                                {showABI && <textarea className = "form-control" rows = "9">
+                                    {JSON.stringify(contractABI, 4)}
+                                </textarea>}
 
                             </div>}
 
@@ -405,4 +362,4 @@ class ContractNew extends Component {
     }
 }
 
-export default ContractNew;
+export default NewApplicant;
