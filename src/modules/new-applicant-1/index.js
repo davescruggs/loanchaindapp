@@ -217,7 +217,7 @@ class NewApplicant extends Component {
             </div>}
 
             {(!(readyToCompileAndCreateContract && web3.isConnected())) && <p align = "center">
-                    <img src = {loader} alt = "" />
+                <img src = {loader} alt = "" />
             </p>}
 
         </div>
