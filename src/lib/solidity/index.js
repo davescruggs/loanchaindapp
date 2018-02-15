@@ -4,6 +4,8 @@ export let Solidity = {
 
     compiler: undefined,
 
+    compiledObjects: {},
+
     autoSetupCompiler: function(wait) {
         
         return new Promise((resolve, reject) => {
@@ -61,29 +63,75 @@ export let Solidity = {
 
         });       
     },
-    
 
-    compileContract: function(contract, compilerOverride) {
+    autoCompileContract: function(file, compilerOverride) {
         
         return new Promise((resolve, reject) => {
 
-            const optimize = 1,
-                compiler = compilerOverride ? compilerOverride : this.compiler;
+            const compiler = compilerOverride ? compilerOverride : this.compiler;
+
+            if(compiler !== undefined) {
+
+                return this.compileContract(file, compiler);
+
+            } else {
+
+                return this.autoSetupCompiler().then(() => {
+                    
+                    return this.compileContract(file, compiler);
+
+                });
+            }
+
+        });
+
+    },
     
-            let compilationResult = compiler.compile(contract, optimize);
 
-            if(compilationResult.errors && JSON.stringify(compilationResult.errors).match(/error/i)) {
-                
-                console.log('Error occured in compilation', compilationResult.errors);
+    compileContract: function(file, compilerOverride) {
+        
+        return new Promise((resolve, reject) => {
 
-                console.log('Error message', JSON.stringify(compilationResult.errors));
+            const compiledObject = this.compiledObjects[file];
 
-                reject(compilationResult.errors);
-            } 
+            if(compiledObject === undefined) {
 
-            console.log('Compilation successful!!!', compilationResult);
+                return this.readSolFile(file).then((contract) => {
 
-            resolve(compilationResult);
+                    const optimize = 1,
+                        compiler = compilerOverride ? compilerOverride : this.compiler;
+        
+                    let compilationResult = compiler.compile(contract, optimize);
+    
+                    if(compilationResult.errors && JSON.stringify(compilationResult.errors).match(/error/i)) {
+                        
+                        console.log('Error occured in compilation', compilationResult.errors);
+    
+                        console.log('Error message', JSON.stringify(compilationResult.errors));
+    
+                        reject(compilationResult.errors);
+    
+                    } else {
+    
+                        console.log('Compilation successful!!!', compilationResult);
+    
+                        this.compiledObjects[file] = compilationResult;
+                        
+                        resolve(compilationResult);
+                    }
+    
+                }).catch((error) => {
+                    
+                    reject(error);
+    
+                });
+
+            } else {
+
+                resolve(compiledObject);
+
+            }
+
 
         });
 

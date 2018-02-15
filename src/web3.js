@@ -17,7 +17,9 @@ export const web3Connection = {
         
         return new Promise((resolve) => {
 
-            let connected = true;
+            let connected = web3.isConnected();
+
+            notifier(connected);
             
             setInterval(() => {
     

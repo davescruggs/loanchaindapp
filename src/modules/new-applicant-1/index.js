@@ -12,9 +12,8 @@ class NewApplicant extends Component {
         super(props);
 
         this.state = {
-            readyToCompileAndCreateContract: false,
-            amNewContract: undefined,
-            statusMessage: 'Connecting to block chain plese wait...',
+            compilationResult: undefined,
+            statusMessage: undefined,
             thisTxHash: undefined,
             contractABI: undefined,
             thisAddress: undefined,
@@ -36,18 +35,32 @@ class NewApplicant extends Component {
 
     componentWillMount() {
 
-        Solidity.readSolFile(AMNewContract).then((responseText) => {
-            this.setState({ amNewContract: responseText });
-        });
+        Solidity.autoSetupCompiler().then(() => {
 
-        Solidity.autoSetupCompiler().then((compiler) => {
-            this.compiler = compiler;
-            this.setState({ readyToCompileAndCreateContract : true });
+            setTimeout(() => {
+
+                Solidity.compileContract(AMNewContract).then((compilationResult) => {
+                    
+                    console.log('compilationResult', compilationResult);
+
+                    this.setState({ compilationResult });
+
+                }).catch((error) => {
+
+                    this.setState({
+                        statusMessage: 'Compilation error ' + JSON.stringify(error),
+                        compilationResult: undefined,
+                        isDeployInProgress: false
+                    });
+
+                });
+
+            }, 1000);
         });
 
         web3Connection.watch((connected) => {
             this.setState({ connected });            
-        }).catch()
+        }).catch();
 
     }
 
@@ -74,51 +87,33 @@ class NewApplicant extends Component {
 
     compileAndDeployCarContract() {
 
-        const { make, model, year, price, vin } = this.state,
-            contractInput = [make, model, year, price, vin, web3.eth.accounts[0]];
+        const { make, model, year, price, vin, compilationResult } = this.state,
+            contractInput = [make, model, year, price, vin, web3.eth.accounts[0]],
+            contractName = ':Car';
 
         this.setState({
             statusMessage: 'Compiling and deploying car contract',
             isDeployInProgress: true
         });
 
-        Solidity.compileContract(this.state.amNewContract).then((compilationResult) => {
-            
-            console.log('compilationResult', compilationResult);
-            
-            BlockChain.getGasPriceAndEstimate(compilationResult).then(({gasPrice, gasEstimate}) => {
+        
+        BlockChain.getGasPriceAndEstimate(compilationResult).then(({gasPrice, gasEstimate}) => {
 
-                BlockChain.deployContract(contractInput, compilationResult, this.onUpdateContract, gasPrice, gasEstimate, ':Car')
-                .catch((error) => {
-                    this.setState({
-                        statusMessage: 'deployment error: ' + error,
-                        isDeployInProgress: false
-                    });                    
-                });
-
-            }).catch((error) => {
+            BlockChain.deployContract(contractInput, compilationResult, this.onUpdateContract, gasPrice, gasEstimate, contractName)
+            .catch((error) => {
                 this.setState({
-                    statusMessage: 'deployment web3.eth.getGasPrice error: ' + error,
+                    statusMessage: 'deployment error: ' + error,
                     isDeployInProgress: false
-                });
+                });                    
             });
 
         }).catch((error) => {
-            alert(error.toString());
             this.setState({
-                statusMessage: 'Compilation error ' + JSON.stringify(error),
+                statusMessage: 'deployment web3.eth.getGasPrice error: ' + error,
                 isDeployInProgress: false
             });
-        })
-    }
+        });
 
-
-    amNewConctract() {
-        return this.state.amNewContract;
-    }
-
-    compiledAMNewContract() {
-        return this.state.compiledAMNewContract;
     }
 
     toogleABI() {
@@ -143,7 +138,8 @@ class NewApplicant extends Component {
     render() {
 
         const { 
-            readyToCompileAndCreateContract,
+            compilationResult,
+            connected,
             statusMessage,
             thisAddress,
             contractABI,
@@ -154,7 +150,7 @@ class NewApplicant extends Component {
 
         return (
         <div>
-            {(readyToCompileAndCreateContract && web3.isConnected()) && <div>
+            {(compilationResult && connected) && <div>
 
                 <div className = "container">
                     <div className = "row">
@@ -201,9 +197,7 @@ class NewApplicant extends Component {
                                 
                                 <br /><br />
 
-                                {showABI && <textarea className = "form-control" rows = "9">
-                                    {JSON.stringify(contractABI, 4)}
-                                </textarea>}
+                                {showABI && <textarea className = "form-control" rows = "9" value = {JSON.stringify(contractABI, 4)} readOnly/>}
 
                             </div>}
 
@@ -216,7 +210,7 @@ class NewApplicant extends Component {
 
             </div>}
 
-            {(!(readyToCompileAndCreateContract && web3.isConnected())) && <p align = "center">
+            {(!(compilationResult && connected)) && <p align = "center">
                 <img src = {loader} alt = "" />
             </p>}
 
