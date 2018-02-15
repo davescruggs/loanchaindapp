@@ -66,24 +66,20 @@ export let Solidity = {
 
     autoCompileContract: function(file, compilerOverride) {
         
-        return new Promise((resolve, reject) => {
+        const compiler = compilerOverride ? compilerOverride : this.compiler;
 
-            const compiler = compilerOverride ? compilerOverride : this.compiler;
+        if(compiler !== undefined) {
 
-            if(compiler !== undefined) {
+            return this.compileContract(file, compiler);
 
+        } else {
+
+            return this.autoSetupCompiler().then(() => {
+                
                 return this.compileContract(file, compiler);
 
-            } else {
-
-                return this.autoSetupCompiler().then(() => {
-                    
-                    return this.compileContract(file, compiler);
-
-                });
-            }
-
-        });
+            });
+        }
 
     },
     

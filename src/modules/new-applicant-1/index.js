@@ -35,27 +35,20 @@ class NewApplicant extends Component {
 
     componentWillMount() {
 
-        Solidity.autoSetupCompiler().then(() => {
+        Solidity.autoCompileContract(AMNewContract).then((compilationResult) => {
+            
+            console.log('compilationResult', compilationResult);
 
-            setTimeout(() => {
+            this.setState({ compilationResult });
 
-                Solidity.compileContract(AMNewContract).then((compilationResult) => {
-                    
-                    console.log('compilationResult', compilationResult);
+        }).catch((error) => {
 
-                    this.setState({ compilationResult });
+            this.setState({
+                statusMessage: 'Compilation error ' + JSON.stringify(error),
+                compilationResult: undefined,
+                isDeployInProgress: false
+            });
 
-                }).catch((error) => {
-
-                    this.setState({
-                        statusMessage: 'Compilation error ' + JSON.stringify(error),
-                        compilationResult: undefined,
-                        isDeployInProgress: false
-                    });
-
-                });
-
-            }, 1000);
         });
 
         web3Connection.watch((connected) => {
