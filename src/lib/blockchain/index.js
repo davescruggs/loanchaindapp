@@ -1,9 +1,9 @@
 
 import { web3 } from '../../web3';
 
-class BlockChain {
+export const BlockChain = {
 
-    getGasPriceAndEstimate(result) {
+    getGasPriceAndEstimate: function(result) {
 
         return new Promise((resolve, reject) => {
 
@@ -15,7 +15,7 @@ class BlockChain {
     
                     console.log('deployment web3.eth.getGasPrice error', err);
     
-                    reject(err, 0, 0);
+                    reject(err);
     
                 } else {
                     
@@ -27,13 +27,13 @@ class BlockChain {
     
                             console.log('deployment web3.eth.estimateGas error', err);
     
-                            reject(err, 0, 0);
+                            reject(err);
     
                         } else {
     
                             console.log('deployment web3.eth.estimateGas amount', gasEstimate);
                             
-                            resolve(err, gasPrice, gasEstimate);
+                            resolve({gasPrice, gasEstimate});
                         }
 
                     });
@@ -42,10 +42,10 @@ class BlockChain {
 
         });
                 
-    }
+    },
 
 
-    deployContract(result, gasPrice, gasEstimate, contractName, fromAccountAddress) {
+    deployContract: function(contractInput, result, onUpdateContract, gasPrice, gasEstimate, contractName, fromAccountAddress) {
         
 
         return new Promise((resolve, reject) => {
@@ -66,9 +66,12 @@ class BlockChain {
                 ethCost = gasPrice * inflatedGasCost / 10000000000 / 100000000,
                 warnings = result.errors ? JSON.stringify(result.errors) + ',' : ''; // show warnings if they exist
 
+
+            console.log('gasEstimate', gasEstimate);
+            console.log('gasPrice', gasPrice);
             console.log(warnings + 'Compiled! (inflated) estimateGas amount: ' + inflatedGasCost + ' (' + ethCost+ ' Ether)');
 
-            myContract.new({from: fromAccountAddress, data: bytecode, gas: inflatedGasCost},
+            myContract.new(...contractInput, {from: fromAccountAddress, data: bytecode, gas: inflatedGasCost},
                 //  {from:web3.eth.accounts[0],data:bytecode,gas:inflatedGasCost},
                 (err, newContract) => { 
 
@@ -95,6 +98,8 @@ class BlockChain {
                             console.log('newContract Mined', newContract);
                             console.log('Car Details', newContract.carDetails());
                         }
+
+                        onUpdateContract(newContract, abi);
 
                         resolve(newContract);
                     }

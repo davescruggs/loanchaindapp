@@ -13,17 +13,19 @@ export const web3Connection = {
         console.log('Web3 Connection Retry', web3);
     },
 
-    watch: (checkInterval) => {
+    watch: (notifier, checkInterval) => {
         
         return new Promise((resolve) => {
 
             let connected = true;
             
-            setTimeout(() => {
+            setInterval(() => {
     
                 if(!web3.isConnected()) {
     
                     connected = false;
+
+                    notifier(connected);
 
                     resolve(connected);
     
@@ -32,6 +34,8 @@ export const web3Connection = {
                 } else if(!connected) {
     
                     connected = true;
+
+                    notifier(connected);
     
                     resolve(connected);
                 }
