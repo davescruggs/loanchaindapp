@@ -1,6 +1,7 @@
 import Web3 from 'web3';
+import Config from './config.js';
 
-const blockChainLocation = 'http://localhost:8545';
+const blockChainLocation = Config.blockchain;
 
 export const web3 = new Web3(new Web3.providers.HttpProvider(blockChainLocation));
 
