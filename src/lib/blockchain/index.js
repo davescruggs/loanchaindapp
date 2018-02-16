@@ -3,11 +3,11 @@ import { web3 } from '../../web3';
 
 export const BlockChain = {
 
-    getGasPriceAndEstimate: function(result) {
+    getGasPriceAndEstimate: function(result, contractName) {
 
         return new Promise((resolve, reject) => {
 
-            const bytecode = '0x' + result.contracts[':Car'].bytecode;
+            const bytecode = '0x' + result.contracts[contractName].bytecode;
             
             web3.eth.getGasPrice((err, gasPrice) => {                
             
@@ -96,7 +96,6 @@ export const BlockChain = {
                             console.log('Contract deployed!!!', 'Contract deployed successfully !!! ');
                             console.log('Contract mined! Address', newContract.address);
                             console.log('newContract Mined', newContract);
-                            console.log('Car Details', newContract.carDetails());
                         }
 
                         onUpdateContract(newContract, abi);

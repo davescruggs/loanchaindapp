@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import './App.css';
 import { web3Connection } from './web3';
-import NewApplicant from './modules/new-applicant-1';
+import NewApplicant from './pages/new-applicant';
+import NewLoanDetails from './pages/new-loan-details';
 
 class App extends Component {
   
@@ -36,7 +37,7 @@ class App extends Component {
         <BrowserRouter>
             <Switch>
                 <Route exact path = '/' component = { NewApplicant } />
-                <Route exact path = '/applicant' component = { NewApplicant } />
+                <Route exact path = '/loan' component = { NewLoanDetails } />
             </Switch>
         </BrowserRouter>
 

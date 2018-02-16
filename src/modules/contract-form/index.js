@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import LoanChainContract from '../resource/loanchain.sol';
 import BlockChain from '../../lib/blockchain';
 import Solidity from '../../lib/solidity';
 import { web3Connection } from '../../web3';
 import loader from '../img/tenor.gif';
 
-class NewApplicant extends Component {
+class ContractForm extends Component {
 
     constructor(props) {
 
@@ -19,28 +18,14 @@ class NewApplicant extends Component {
             thisAddress: undefined,
             connected: undefined,
             isDeployInProgress: undefined,
-            showABI: false,
-            contractFile : LoanChainContract,
-            moduleTitle: 'Please fill in loan applicant details',
-            contractName: ':Applicant',
-            processCommandText: 'Submit Details',
-            form: {
-                name: {title: 'Name' , value: 'name'},
-                sex: {title: 'Sex', value: 'sex'},
-                dob: {title: 'DOB', value: 'dob'},
-                street1: {title: 'Street 1', value: 'street1'},
-                street2: {title: 'Street 2', value: 'street2'},
-                city: {title: 'City', value: 'city'},
-                zip: {title: 'Zip', value: 'zip'},
-                state: {title: 'State', value: 'state'},
-                country: {title: 'Country', value: 'country' },
-                ssn: {title: 'Social Security', value: '1234', validate: (value) => {return parseInt(value, 10) || 0} },
-                income: {title: 'Anual Income', value: '123456789101112', validate: (value) => {return parseInt(value, 10) || 0} }
-            }
+            contractFile : props.contractFile,
+            moduleTitle: props.moduleTitle,
+            contractName: props.contractName,
+            processCommandText: props.processCommandText,
+            form: props.form
         }
 
         this.compileAndDeployCarContract = this.compileAndDeployCarContract.bind(this);
-        this.toogleABI = this.toogleABI.bind(this);
         this.onUpdateContract = this.onUpdateContract.bind(this);
 
     }
@@ -96,7 +81,12 @@ class NewApplicant extends Component {
 
     onContractCreated(contract) {
         return new Promise(() => {
-            console.log('getApplicantDetails', contract.getApplicantDetails());
+            const { onContractCreated } = this.props;
+
+            if(onContractCreated) {
+                onContractCreated(contract, { ...this.state })
+            }
+
         }).catch((error) => {
             console.log('Contract created object error', error)
         });
@@ -135,12 +125,6 @@ class NewApplicant extends Component {
 
     }
 
-    toogleABI() {
-        this.setState({
-            showABI : !this.state.showABI
-        })
-    }
-
     onDataChange(field, { target }) {
         const { value } = target,   
             updateState = { ...this.state.form };
@@ -168,10 +152,6 @@ class NewApplicant extends Component {
             processCommandText,
             compilationResult,            
             connected,
-            statusMessage,
-            thisAddress,
-            contractABI,
-            showABI,
             isDeployInProgress,
             form
         } = this.state;
@@ -212,4 +192,4 @@ class NewApplicant extends Component {
     }
 }
 
-export default NewApplicant;
+export default ContractForm;
