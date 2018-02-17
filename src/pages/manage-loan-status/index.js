@@ -39,9 +39,11 @@ class ManageLoanStatus extends Component {
         
         return <div>
             <LoanStatus loanAddress = {this.loanAddress} onLoanStatusNotified = { this.onLoanStatusNotified } />
-            {loanInfo && "Loan Info Found"}
-            {applicant && "Applicant Info Found"}
-            {loanProgram && "Loan Program Info Found"}
+            <p align = "center">
+                <input type = "button" className = "btn btn-primary" value = "Approve" disabled = { loanInfo === undefined } />&nbsp;&nbsp;&nbsp;
+                <input type = "button" className = "btn btn-primary" value = "Verify Applicant" disabled = { applicant === undefined } />&nbsp;&nbsp;&nbsp;
+                <input type = "button" className = "btn btn-primary" value = "Verify Loan Program" disabled = { loanProgram === undefined } />&nbsp;&nbsp;&nbsp;
+            </p>
         </div>
     }
 }

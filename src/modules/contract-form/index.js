@@ -23,7 +23,8 @@ class ContractForm extends Component {
             contractName: props.contractName,
             processCommandText: props.processCommandText,
             form: props.form,
-            associateForm: props.associateForm
+            associateForm: props.associateForm,
+            commandDisabled: props.commandDisabled
         }
 
         this.compileAndDeployCarContract = this.compileAndDeployCarContract.bind(this);
@@ -37,7 +38,8 @@ class ContractForm extends Component {
             contractName: props.contractName,
             processCommandText: props.processCommandText,
             form: props.form,
-            associateForm: props.associateForm
+            associateForm: props.associateForm,
+            commandDisabled: props.commandDisabled
         });
     }
 
@@ -207,7 +209,8 @@ class ContractForm extends Component {
             isDeployInProgress,
             statusMessage,
             form,
-            associateForm
+            associateForm,
+            commandDisabled
         } = this.state;
 
         return (
@@ -223,7 +226,7 @@ class ContractForm extends Component {
                                 
                                 { this.renderForm(form) }
 
-                                {(!associateForm) && <input type = "button" className = "btn btn-primary" value = { processCommandText } onClick = { this.compileAndDeployCarContract } disabled = {isDeployInProgress} />}
+                                {(!associateForm) && <input type = "button" className = "btn btn-primary" value = { processCommandText } onClick = { this.compileAndDeployCarContract } disabled = {isDeployInProgress || commandDisabled} />}
 
                             </div>
                         </div>
