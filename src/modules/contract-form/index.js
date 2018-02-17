@@ -223,7 +223,7 @@ class ContractForm extends Component {
                                 
                                 { this.renderForm(form) }
 
-                                <input type = "button" className = "btn btn-primary" value = { processCommandText } onClick = { this.compileAndDeployCarContract } disabled = {isDeployInProgress} />
+                                {(!associateForm) && <input type = "button" className = "btn btn-primary" value = { processCommandText } onClick = { this.compileAndDeployCarContract } disabled = {isDeployInProgress} />}
 
                             </div>
                         </div>
