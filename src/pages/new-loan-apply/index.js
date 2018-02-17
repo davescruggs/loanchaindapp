@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router';
 import ContractForm from '../../modules/contract-form';
 import ContractFile from '../../modules/resource/loanchain.sol';
 import BlockChain from '../../lib/blockchain';
@@ -16,7 +18,10 @@ class NewLoanDetails extends Component {
             applicantName: '',
             programName: 'finding loan program for you!!! ...',
             loanProgramAddress: '',
-            applicantAddress: this.applicantAddress
+            invalidApplicant: false,
+            applicantAddress: this.applicantAddress,
+            applicant: undefined,
+            redirectToLoanStatus: undefined
         }
 
         this.compiledObject = undefined;
@@ -54,8 +59,44 @@ class NewLoanDetails extends Component {
 
     onLoanProgramFound(loanProgram) {
 
+        if(loanProgram.address) {
+            
+            loanProgram.ApplicationCreated((error, loanContract) => {
+                if(this.resolveSubmitLoan) {
+                    this.resolveSubmitLoan({redirect: true});
+                    this.setState({ redirectToLoanStatus: '/loanstatus?loan=' + loanContract.address });
+                }
+            });
+    
+            this.setState({
+                loanProgram,
+                programName: loanProgram.name(),
+                loanProgramAddress: loanProgram.address
+            })
+        }
+    }
+
+    onCompilationComplete(compiledObject, componentState) {
+        
         const { applicantAddress } = this.state;  
 
+        this.compiledObject = compiledObject;
+
+        BlockChain.getContract(compiledObject, ':LoanProgram', Config.loanProgramContract).then((loanProgram) => {
+            loanProgram.name();
+            this.onLoanProgramFound(loanProgram);            
+
+        }).catch((error) => {
+
+            BlockChain.getGasPriceAndEstimate(compiledObject, ':LoanProgram').then(({gasPrice, gasEstimate}) => {
+                
+                BlockChain.deployContract([Config.loanProgramName], compiledObject, this.onLoanProgramFound, gasPrice, gasEstimate, ':LoanProgram').catch((error) => {
+                    //TODO: Handle Loan Program failure error here
+                });
+
+            });
+        });
+        
         BlockChain.getContract(this.compiledObject,':Applicant', applicantAddress).then((applicant) => {
             this.setState({
                 applicantName: applicant.getApplicantDetails()[0],
@@ -63,50 +104,16 @@ class NewLoanDetails extends Component {
             });
         }).catch((error) => {
             this.setState({
-                applicant: undefined
+                applicant: undefined,
+                invalidApplicant: true
             });
-        });
-
-        loanProgram.ApplicationCreated((error, loanContract) => {
-            if(this.resolveSubmitLoan) {
-                this.resolveSubmitLoan('Success ' + loanContract.address)
-            }
-        });
-
-        this.setState({
-            loanProgram,
-            programName: loanProgram.name(),
-            loanProgramAddress: loanProgram.address
-        })
-
-    }
-
-    onCompilationComplete(compiledObject, componentState) {
-        
-        this.compiledObject = compiledObject;
-
-        BlockChain.getContract(compiledObject, ':LoanProgram', Config.loanProgramContract).then((loanProgram) => {            
-            
-            this.onLoanProgramFound(loanProgram);            
-
-        }).catch((error) => {
-
-            if(error.errorContractNotFound) {
-
-                BlockChain.getGasPriceAndEstimate(compiledObject, ':LoanProgram').then(({gasPrice, gasEstimate}) => {
-                    
-                    BlockChain.deployContract([Config.loanProgramName], compiledObject, this.onLoanProgramFound, gasPrice, gasEstimate, ':LoanProgram').catch((error) => {
-                        //TODO: Handle Loan Program failure error here
-                    });
-    
-                });
-            }
-
-        });
+        });        
     }    
 
     render() {
-        const { applicantName, programName, applicantAddress, loanProgramAddress } = this.state,
+        const { applicantName, programName, 
+                applicantAddress, loanProgramAddress, 
+                invalidApplicant, redirectToLoanStatus } = this.state,
             props = {
                 contractFile : ContractFile,
                 moduleTitle: 'Please specify the loan information',
@@ -120,7 +127,14 @@ class NewLoanDetails extends Component {
                     loanPeriod: {title: 'Period in years', value: '', validate: (value) => {return parseInt(value, 10) || 0} }
             }
         }        
-        return <ContractForm { ...props } onCompilationComplete = { this.onCompilationComplete } onSubmit = { this.onSubmitLoanApplication } />
+        return <div>
+            {(!invalidApplicant) && <ContractForm { ...props } onCompilationComplete = { this.onCompilationComplete } onSubmit = { this.onSubmitLoanApplication } />}
+            {invalidApplicant && <p align="center">
+                Not a valid applicant or applicant not found<br />
+                <Link to = '/'>Register new applicant</Link>
+            </p>}
+            { redirectToLoanStatus && <Redirect to={redirectToLoanStatus} /> }}
+        </div>
     }
 }
 

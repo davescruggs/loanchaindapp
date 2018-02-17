@@ -17,7 +17,6 @@ class NewApplicant extends Component {
     }
 
     onNewApplicantCreated(applicantContract, componentState) {
-        alert('Contract created successfully');
         this.setState({ redirectToLoanDetails: '/loan?applicant=' + applicantContract.address });
         console.log('componentState', componentState);
         console.log('applicantContract', applicantContract);

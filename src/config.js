@@ -2,7 +2,7 @@ export const Config = {
     "blockchain": "http://localhost:8545",
     "barrowAddress": "",
     "lendAddress": "",
-    "loanProgramContract": "0x5ddcc9e3fd18c247584a250142c2ec240d3adda8",
+    "loanProgramContract": "0x57a8be5f41b25ccd0527bc752c2a67fc8c98d6f0",
     "loanProgramName": "Personal Loan Program"
 }
 

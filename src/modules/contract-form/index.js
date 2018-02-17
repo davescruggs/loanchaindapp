@@ -126,10 +126,14 @@ class ContractForm extends Component {
             });
 
             this.props.onSubmit(this.state.form).then((response) => {
-                this.setState({
-                    statusMessage: response,
-                    isDeployInProgress: false
-                });                
+                
+                if(!response.redirect) {
+                    this.setState({
+                        statusMessage: response,
+                        isDeployInProgress: false
+                    });
+                }
+
             }).catch((error) => {
                 this.setState({
                     statusMessage: error,

@@ -144,12 +144,6 @@ export const BlockChain = {
 
     },
     
-    stringToAddress: function(address) {
-        //  return new web3.eth.iban.fromAddress(address).address;
-        //  alert(web3.eth.accounts[0]);
-        return web3.eth.accounts[0];
-    },
-
     fromAccount: function() {
         return web3.eth.accounts[0];
     }
