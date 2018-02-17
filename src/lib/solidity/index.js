@@ -76,7 +76,7 @@ export let Solidity = {
 
             return this.autoSetupCompiler().then(() => {
                 
-                return this.compileContract(file, compiler);
+                return this.compileContract(file);
 
             });
         }

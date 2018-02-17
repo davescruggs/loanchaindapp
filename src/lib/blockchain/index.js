@@ -44,6 +44,12 @@ export const BlockChain = {
                 
     },
 
+    getInflatedGas: function(result, contractName) {
+        return this.getGasPriceAndEstimate(result, contractName).then(({gasPrice, gasEstimate}) => {
+            return Math.round(1.2 * gasEstimate);
+        });
+    },
+
 
     deployContract: function(contractInput, result, onUpdateContract, gasPrice, gasEstimate, contractName, fromAccountAddress) {
         
@@ -107,8 +113,46 @@ export const BlockChain = {
 
         });
 
-    }    
+    },
+    
+    getContract: function(compiledObject, contractName, contractAddress) {        
 
+        return new Promise((resolve, reject) => {
+            try {
+                if(compiledObject) {
+                    const contract = compiledObject.contracts[contractName],
+                        abi = JSON.parse(contract.interface),
+                        myContract = web3.eth.contract(abi),
+                        contractFound = myContract.at(contractAddress);
+                    if((contractFound) && (contractFound.address.trim() !== '')) {
+                        
+                        resolve(contractFound);
+
+                    } else {
+
+                        reject({error: true, errorContractNotFound: true});
+                        
+                    }
+                } else {
+                    reject({error: true, errorCompiledObjectNotValid: true});
+                }
+            } catch(error) {
+                reject(error);
+            }
+
+        });
+
+    },
+    
+    stringToAddress: function(address) {
+        //  return new web3.eth.iban.fromAddress(address).address;
+        //  alert(web3.eth.accounts[0]);
+        return web3.eth.accounts[0];
+    },
+
+    fromAccount: function() {
+        return web3.eth.accounts[0];
+    }
 }
 
 export default BlockChain;

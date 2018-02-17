@@ -30,6 +30,15 @@ class ContractForm extends Component {
 
     }
 
+    componentWillReceiveProps(props) {
+        this.setState({
+            moduleTitle: props.moduleTitle,
+            contractName: props.contractName,
+            processCommandText: props.processCommandText,
+            form: props.form
+        });
+    }
+
     componentWillMount() {
 
         Solidity.autoCompileContract(this.state.contractFile).then((compilationResult) => {
@@ -37,6 +46,8 @@ class ContractForm extends Component {
             console.log('compilationResult', compilationResult);
 
             this.setState({ compilationResult });
+
+            this.onCompilationComplete(compilationResult);
 
         }).catch((error) => {
 
@@ -52,6 +63,19 @@ class ContractForm extends Component {
             this.setState({ connected });            
         }).catch();
 
+    }
+
+    onCompilationComplete(compiledObject) {
+        return new Promise(() => {
+            const { onCompilationComplete } = this.props;
+
+            if(onCompilationComplete) {
+                onCompilationComplete(compiledObject, { ...this.state })
+            }
+
+        }).catch((error) => {
+            console.log('Error getting compiled object', error)
+        });
     }
 
     onUpdateContract(newContract, abi) {
@@ -93,35 +117,57 @@ class ContractForm extends Component {
     }
 
     compileAndDeployCarContract() {
+        
+        if(this.props.onSubmit) {
 
-        const contractInput = Object.keys(this.state.form).map((item) => {
+            this.setState({
+                statusMessage: 'Compiling and deploying car contract',
+                isDeployInProgress: true
+            });
+
+            this.props.onSubmit(this.state.form).then((response) => {
+                this.setState({
+                    statusMessage: response,
+                    isDeployInProgress: false
+                });                
+            }).catch((error) => {
+                this.setState({
+                    statusMessage: error,
+                    isDeployInProgress: false
+                });                
+            })
+
+        } else {
+
+            const contractInput = Object.keys(this.state.form).map((item) => {
                 return this.state.form[item].value;
             }),
             contractName = this.state.contractName,
             { compilationResult } = this.state;
 
-        this.setState({
-            statusMessage: 'Compiling and deploying car contract',
-            isDeployInProgress: true
-        });
-
-        
-        BlockChain.getGasPriceAndEstimate(compilationResult, contractName).then(({gasPrice, gasEstimate}) => {
-
-            BlockChain.deployContract(contractInput, compilationResult, this.onUpdateContract, gasPrice, gasEstimate, contractName)
-            .catch((error) => {
-                this.setState({
-                    statusMessage: 'deployment error: ' + error,
-                    isDeployInProgress: false
-                });                    
-            });
-
-        }).catch((error) => {
             this.setState({
-                statusMessage: 'deployment web3.eth.getGasPrice error: ' + error,
-                isDeployInProgress: false
+                statusMessage: 'Compiling and deploying car contract',
+                isDeployInProgress: true
             });
-        });
+
+            
+            BlockChain.getGasPriceAndEstimate(compilationResult, contractName).then(({gasPrice, gasEstimate}) => {
+
+                BlockChain.deployContract(contractInput, compilationResult, this.onUpdateContract, gasPrice, gasEstimate, contractName)
+                .catch((error) => {
+                    this.setState({
+                        statusMessage: 'deployment error: ' + error,
+                        isDeployInProgress: false
+                    });                    
+                });
+
+            }).catch((error) => {
+                this.setState({
+                    statusMessage: 'deployment web3.eth.getGasPrice error: ' + error,
+                    isDeployInProgress: false
+                });
+            });
+        }
 
     }
 
@@ -137,10 +183,10 @@ class ContractForm extends Component {
 
     renderForm(form) {
         return Object.keys(form).map((item) => {
-            const { title, value } = form[item];
+            const { title, value, readOnly } = form[item];
             return <div key = {item} >
                 <label>{title}</label>
-                <input type = "text"  className = "form-control" value = { value } onChange = { this.onDataChange.bind(this, item) } /> <br />
+                <input type = "text"  className = "form-control" value = { value } onChange = { this.onDataChange.bind(this, item) } readOnly = { readOnly } /> <br />
             </div>
         });
     }
@@ -153,6 +199,7 @@ class ContractForm extends Component {
             compilationResult,            
             connected,
             isDeployInProgress,
+            statusMessage,
             form
         } = this.state;
 
@@ -174,6 +221,7 @@ class ContractForm extends Component {
                             </div>
                         </div>
                         <div className = "col-sm-6">
+                            { statusMessage }
                             {isDeployInProgress && <img src = {loader} alt = "" />}
                         </div>
                     </div>

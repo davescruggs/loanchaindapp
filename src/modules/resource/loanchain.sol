@@ -91,7 +91,6 @@ contract LoanProgram {
   }
 
   function apply(address applicant,string loanType, int loanAmount,int loanPeriodInYears) public {
-
     address newContract = new Loan(name,applicant,loanType,loanAmount,loanPeriodInYears);
     ApplicationCreated(newContract);
   }

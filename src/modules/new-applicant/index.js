@@ -4,7 +4,7 @@ import { web3, web3Connection } from '../../web3';
 import _ from 'lodash';
 import loader from '../img/tenor.gif';
 
-class NewApplicant extends Component {
+class CarApplicant extends Component {
 
     constructor(props) {
 
@@ -188,7 +188,9 @@ class NewApplicant extends Component {
             statusMessage: warnings + 'Compiled! (inflated) estimateGas amount: ' + inflatedGasCost + ' (' + ethCost+ ' Ether)'
         });
 
-        myContract.new(make, model, year, price, vin, web3.eth.accounts[0], 
+        //myContract.new(make, model, year, price, vin, web3.eth.accounts[0], 
+        //myContract.new(make, model, year, price, vin, '0xa011789d6ced477a6f54c6fd74481f474b4812bd', 
+        myContract.new(make, model, year, price, vin, 'adf', 
             {from:web3.eth.accounts[0],data:bytecode,gas:inflatedGasCost}, 
             (err, newContract) => { 
 
@@ -362,4 +364,4 @@ class NewApplicant extends Component {
     }
 }
 
-export default NewApplicant;
+export default CarApplicant;
