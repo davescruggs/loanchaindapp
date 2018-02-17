@@ -62,9 +62,10 @@ class NewLoanDetails extends Component {
         if(loanProgram.address) {
             
             loanProgram.ApplicationCreated((error, loanContract) => {
+                console.log('loanContract', loanContract);
                 if(this.resolveSubmitLoan) {
                     this.resolveSubmitLoan({redirect: true});
-                    this.setState({ redirectToLoanStatus: '/loanstatus?loan=' + loanContract.address });
+                    this.setState({ redirectToLoanStatus: '/loanstatus?loan=' + loanContract.args.contractAddress });
                 }
             });
     

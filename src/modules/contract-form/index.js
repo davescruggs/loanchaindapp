@@ -22,7 +22,8 @@ class ContractForm extends Component {
             moduleTitle: props.moduleTitle,
             contractName: props.contractName,
             processCommandText: props.processCommandText,
-            form: props.form
+            form: props.form,
+            associateForm: props.associateForm
         }
 
         this.compileAndDeployCarContract = this.compileAndDeployCarContract.bind(this);
@@ -35,7 +36,8 @@ class ContractForm extends Component {
             moduleTitle: props.moduleTitle,
             contractName: props.contractName,
             processCommandText: props.processCommandText,
-            form: props.form
+            form: props.form,
+            associateForm: props.associateForm
         });
     }
 
@@ -204,7 +206,8 @@ class ContractForm extends Component {
             connected,
             isDeployInProgress,
             statusMessage,
-            form
+            form,
+            associateForm
         } = this.state;
 
         return (
@@ -224,10 +227,15 @@ class ContractForm extends Component {
 
                             </div>
                         </div>
-                        <div className = "col-sm-6">
+
+                        {associateForm && <div className = "col-sm-6">
+                            { this.renderForm(associateForm) }
+                        </div>}
+
+                        {(!associateForm) && <div className = "col-sm-6">
                             { statusMessage }
                             {isDeployInProgress && <img src = {loader} alt = "" />}
-                        </div>
+                        </div>}
                     </div>
                 </div>                
 

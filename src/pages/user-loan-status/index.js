@@ -25,7 +25,15 @@ class UserLoanStatus extends Component {
             loanPeriodInYears: '',
             loanProgramAddress: '',
             loanType: '',
-            loanReceived: ''
+            loanReceived: '',
+            applicant: undefined,
+            name: '',
+            sex: '',
+            dob: '',
+            zip: '',
+            income: '',
+            loanProgram: undefined,
+            loanProgramName: ''
         }
 
         this.compiledObject = undefined;
@@ -57,21 +65,41 @@ class UserLoanStatus extends Component {
                 loanAmount: loanInfo.loanAmount(),
                 loanPeriodInYears: loanInfo.loanPeriodInYears(),
                 loanProgramAddress: loanInfo.loanProgramAddress(),
-                //  loanType: loanInfo.loanType(),
-                //  loanReceived: loanInfo.received()
+                loanType: loanInfo.loanType(),
+                loanReceived: loanInfo.received()
             });
 
-            /*  BlockChain.getContract(this.compiledObject,':Applicant', applicantAddress).then((applicant) => {
+            BlockChain.getContract(this.compiledObject,':Applicant', loanInfo.applicantContractAddress()).then((applicant) => {
+                const applicantInfo = applicant.getApplicantDetails();
+                console.log('applicantInfo', applicantInfo);
                 this.setState({
-                    applicantName: applicant.getApplicantDetails()[0],
-                    applicant
+                    applicant: applicant,
+                    name: applicantInfo[0],
+                    sex: applicantInfo[1],
+                    dob: applicantInfo[2],
+                    zip: applicantInfo[3],
+                    income: applicantInfo[4]
                 });
             }).catch((error) => {
                 this.setState({
                     applicant: undefined,
-                    invalidApplicant: true
+                    invalidLoanInformation: true
                 });
-            });*/           
+            });
+            
+            BlockChain.getContract(this.compiledObject,':LoanProgram', loanInfo.loanProgramAddress()).then((loanProgram) => {
+                console.log('loanProgram', loanProgram);
+                this.setState({
+                    loanProgram,
+                    loanProgramName: loanProgram.name()
+                });
+            }).catch((error) => {
+                this.setState({
+                    loanProgram: undefined,
+                    invalidLoanInformation: true
+                });
+            });            
+
         }
     }
 
@@ -83,6 +111,7 @@ class UserLoanStatus extends Component {
 
         BlockChain.getContract(compiledObject, ':Loan', loanAddress).then((loanInfo) => {
             console.log('loanInfo', loanInfo)
+            loanInfo.loanType();
             this.onLoanInfoFound(loanInfo);
         }).catch((error) => {
             console.log('error', error);
@@ -101,7 +130,8 @@ class UserLoanStatus extends Component {
             estimatedEMI, estimatedIntrestRate,
             goodCredit, loanAmount,
             loanPeriodInYears, loanProgramAddress,
-            loanType, loanReceived } = this.state,            
+            loanType, loanReceived,
+            name, sex, dob, zip, income, loanProgramName } = this.state,            
             props = {
                 contractFile : ContractFile,
                 moduleTitle: 'Loan status',
@@ -109,16 +139,24 @@ class UserLoanStatus extends Component {
                 processCommandText: 'Ok',
                 form: {   
                     loanAddress: {title: 'Loan Reference' , value: loanAddress, readOnly: true},
-                    applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
                     loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
                     estimatedEMI: {title: 'Emi estimation' , value: estimatedEMI, readOnly: true},
                     estimatedIntrestRate: {title: 'Intrest rate estimation' , value: estimatedIntrestRate, readOnly: true},
                     goodCredit: {title: 'Credit status' , value: goodCredit, readOnly: true},
                     loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
                     loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
-                    loanProgramAddress: {title: 'Loan Program reference' , value: loanProgramAddress, readOnly: true},
                     loanType: {title: 'Loan type' , value: loanType, readOnly: true},
-                    loanReceived: {title: 'Loan received status' , value: loanReceived, readOnly: true}
+                    loanReceived: {title: 'Loan received status' , value: loanReceived ? 'Received' : 'Not received', readOnly: true}
+                },
+                associateForm: {   
+                    loanProgramAddress: {title: 'Loan Program reference' , value: loanProgramAddress, readOnly: true},
+                    loanProgram: {title: 'Loan Program' , value: loanProgramName, readOnly: true},
+                    applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
+                    name: {title: 'Name' , value: name, readOnly: true},
+                    sex: {title: 'Sex', value: sex, readOnly: true},
+                    dob: {title: 'DOB', value: dob, readOnly: true},
+                    zip: {title: 'Zip', value: zip, readOnly: true},
+                    income: {title: 'Annual Income', value: income, readOnly: true}
                 }
             }        
         return <div>
