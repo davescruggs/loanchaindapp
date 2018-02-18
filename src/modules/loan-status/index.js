@@ -97,7 +97,6 @@ class LoanStatus extends Component {
 
             BlockChain.getContract(this.compiledObject,':Applicant', loanInfoFound.applicantContractAddress()).then((applicant) => {
                 const applicantInfo = applicant.getApplicantDetails();
-                console.log('applicantInfo', applicantInfo);
                 this.setState({
                     applicant: applicant,
                     name: applicantInfo[0],
@@ -119,7 +118,6 @@ class LoanStatus extends Component {
             });
             
             BlockChain.getContract(this.compiledObject,':LoanProgram', loanInfoFound.loanProgramAddress()).then((loanProgram) => {
-                console.log('loanProgram', loanProgram);
                 this.setState({
                     loanProgram,
                     loanProgramName: loanProgram.name()
@@ -139,15 +137,30 @@ class LoanStatus extends Component {
         }
     }
 
-    onCompilationComplete(compiledObject, componentState) {
+    onCompilationComplete(compiledObject) {
         
-        const { loanAddress } = this.state,
-            { onCompilationComplete } = this.props;
+        const { onCompilationComplete } = this.props;
 
         this.compiledObject = compiledObject;
 
+        this.readLoanInfo();
+
+        if(!this.props.onLoanStatusNotified) {
+            setInterval(this.readLoanInfo.bind(this), 3000);
+        }
+
+        if(onCompilationComplete) {
+            onCompilationComplete(compiledObject);
+        }
+        
+    }
+    
+    readLoanInfo() {
+
+        const { compiledObject } = this,
+            { loanAddress } = this.state;
+
         BlockChain.getContract(compiledObject, ':Loan', loanAddress).then((loanInfo) => {
-            console.log('loanInfo', loanInfo)
             loanInfo.loanType();
             this.onLoanInfoFound(loanInfo);
         }).catch((error) => {
@@ -158,11 +171,7 @@ class LoanStatus extends Component {
             });
         });
 
-        if(onCompilationComplete) {
-            onCompilationComplete(compiledObject);
-        }
-        
-    }    
+    }
 
     render() {
         const { 
