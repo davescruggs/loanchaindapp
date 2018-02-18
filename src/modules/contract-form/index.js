@@ -211,7 +211,6 @@ class ContractForm extends Component {
             compilationResult,            
             connected,
             isDeployInProgress,
-            statusMessage,
             form,
             associateForm,
             commandDisabled
@@ -240,7 +239,6 @@ class ContractForm extends Component {
                         </div>}
 
                         {(!associateForm) && <div className = "col-sm-6">
-                            { statusMessage }
                             {isDeployInProgress && <img src = {loader} alt = "" />}
                         </div>}
                     </div>
