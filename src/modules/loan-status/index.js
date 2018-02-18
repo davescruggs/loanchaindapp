@@ -32,7 +32,8 @@ class LoanStatus extends Component {
             zip: '',
             income: '',
             loanProgram: undefined,
-            loanProgramName: ''
+            loanProgramName: '',
+            editIntrestAndEMI: (props.editIntrestAndEMI === undefined) ? false : props.editIntrestAndEMI
         }
 
         this.compiledObject = undefined;
@@ -41,6 +42,26 @@ class LoanStatus extends Component {
         this.onCompilationComplete = this.onCompilationComplete.bind(this);
         this.onLoanInfoFound = this.onLoanInfoFound.bind(this);
         this.onLoanProcess = this.onLoanProcess.bind(this);
+        this.onDataChange = this.onDataChange.bind(this);
+    }
+
+    componentWillReceiveProps(props) {
+        
+        this.setState({
+            editIntrestAndEMI: props.editIntrestAndEMI,
+            ...props.updateInfo
+        });
+        
+        if(props.onSaveData) {
+            props.onSaveData({ ...this.state });
+        }
+    }
+    
+    onDataChange(state) {
+        this.setState({
+            estimatedEMI: parseInt(state.form.estimatedEMI.value, 10) || 0,
+            estimatedIntrestRate: parseInt(state.form.estimatedIntrestRate.value, 10) || 0
+        });
     }
 
     onLoanProcess(formData) {
@@ -60,8 +81,8 @@ class LoanStatus extends Component {
                 loanAddress: loanInfoFound.address,
                 applicantAddress: loanInfoFound.applicantContractAddress(),
                 loanApproved: loanInfoFound.approved(),
-                estimatedEMI: loanInfoFound.estimatedEMI(),
-                estimatedIntrestRate: loanInfoFound.estimatedIntrestRate(),
+                estimatedEMI: parseInt(loanInfoFound.estimatedEMI().toString(), 10),
+                estimatedIntrestRate: parseInt(loanInfoFound.estimatedIntrestRate().toString(), 10),
                 goodCredit: loanInfoFound.goodCredit(),
                 loanAmount: loanInfoFound.loanAmount(),
                 loanPeriodInYears: loanInfoFound.loanPeriodInYears(),
@@ -120,7 +141,8 @@ class LoanStatus extends Component {
 
     onCompilationComplete(compiledObject, componentState) {
         
-        const { loanAddress } = this.state;  
+        const { loanAddress } = this.state,
+            { onCompilationComplete } = this.props;
 
         this.compiledObject = compiledObject;
 
@@ -135,6 +157,10 @@ class LoanStatus extends Component {
                 invalidLoanInformation: true
             });
         });
+
+        if(onCompilationComplete) {
+            onCompilationComplete(compiledObject);
+        }
         
     }    
 
@@ -146,7 +172,8 @@ class LoanStatus extends Component {
                 goodCredit, loanAmount,
                 loanPeriodInYears, loanProgramAddress,
                 loanType, loanReceived,
-                name, sex, dob, zip, income, loanProgramName
+                name, sex, dob, zip, income, loanProgramName,
+                editIntrestAndEMI
             } = this.state,
             props = {
                 contractFile : ContractFile,
@@ -156,8 +183,8 @@ class LoanStatus extends Component {
                 form: {   
                     loanAddress: {title: 'Loan Reference' , value: loanAddress, readOnly: true},
                     loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
-                    estimatedEMI: {title: 'Emi estimation' , value: estimatedEMI, readOnly: true},
-                    estimatedIntrestRate: {title: 'Intrest rate estimation' , value: estimatedIntrestRate, readOnly: true},
+                    estimatedEMI: {title: 'Emi estimation' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
+                    estimatedIntrestRate: {title: 'Intrest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
                     goodCredit: {title: 'Credit status' , value: goodCredit, readOnly: true},
                     loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
                     loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
@@ -177,7 +204,7 @@ class LoanStatus extends Component {
             }
             
         return <div>
-            {(!invalidLoanInformation) && <ContractForm { ...props } onCompilationComplete = { this.onCompilationComplete } onSubmit = { this.onLoanProcess } />}
+            {(!invalidLoanInformation) && <ContractForm { ...props } onCompilationComplete = { this.onCompilationComplete } onSubmit = { this.onLoanProcess } onDataChange = { this.onDataChange } />}
             {invalidLoanInformation && <p align="center">
                 Not a valid loan or loan not found<br />
                 <Link to = '/'>Apply new loan</Link>

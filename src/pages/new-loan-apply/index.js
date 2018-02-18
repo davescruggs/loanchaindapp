@@ -33,15 +33,14 @@ class NewLoanDetails extends Component {
     }
 
     onSubmitLoanApplication(formData) {
-        const { loanProgram, applicant } = this.state,
-            byteCode = '0x' + this.compiledObject.contracts[':LoanProgram'].bytecode;
+        const { loanProgram, applicant } = this.state;
 
         return new Promise((resolve, reject) => {
             
             this.resolveSubmitLoan = resolve.bind(this);
             
             try {
-                BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then((inflatedGas) => {
+                BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
                     
                     loanProgram.apply(applicant.address,
                         formData.loanType.value, 

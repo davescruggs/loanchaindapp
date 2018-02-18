@@ -187,6 +187,10 @@ class ContractForm extends Component {
         updateState[field].value = updateState[field].validate ? updateState[field].validate(value) : value;
 
         this.setState( { form: updateState } );
+        
+        if(this.props.onDataChange) {
+            this.props.onDataChange({ ...this.state });
+        }
     }
 
     renderForm(form) {
