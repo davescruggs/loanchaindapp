@@ -23,7 +23,8 @@ class ContractForm extends Component {
             contractName: props.contractName,
             processCommandText: props.processCommandText,
             form: props.form,
-            associateForm: props.associateForm
+            associateForm: props.associateForm,
+            commandDisabled: props.commandDisabled
         }
 
         this.compileAndDeployCarContract = this.compileAndDeployCarContract.bind(this);
@@ -37,7 +38,8 @@ class ContractForm extends Component {
             contractName: props.contractName,
             processCommandText: props.processCommandText,
             form: props.form,
-            associateForm: props.associateForm
+            associateForm: props.associateForm,
+            commandDisabled: props.commandDisabled
         });
     }
 
@@ -185,6 +187,10 @@ class ContractForm extends Component {
         updateState[field].value = updateState[field].validate ? updateState[field].validate(value) : value;
 
         this.setState( { form: updateState } );
+        
+        if(this.props.onDataChange) {
+            this.props.onDataChange({ ...this.state });
+        }
     }
 
     renderForm(form) {
@@ -205,9 +211,9 @@ class ContractForm extends Component {
             compilationResult,            
             connected,
             isDeployInProgress,
-            statusMessage,
             form,
-            associateForm
+            associateForm,
+            commandDisabled
         } = this.state;
 
         return (
@@ -223,7 +229,7 @@ class ContractForm extends Component {
                                 
                                 { this.renderForm(form) }
 
-                                <input type = "button" className = "btn btn-primary" value = { processCommandText } onClick = { this.compileAndDeployCarContract } disabled = {isDeployInProgress} />
+                                {(!associateForm) && <input type = "button" className = "btn btn-primary" value = { processCommandText } onClick = { this.compileAndDeployCarContract } disabled = {isDeployInProgress || commandDisabled} />}
 
                             </div>
                         </div>
@@ -233,7 +239,6 @@ class ContractForm extends Component {
                         </div>}
 
                         {(!associateForm) && <div className = "col-sm-6">
-                            { statusMessage }
                             {isDeployInProgress && <img src = {loader} alt = "" />}
                         </div>}
                     </div>

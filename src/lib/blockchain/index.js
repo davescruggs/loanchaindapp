@@ -7,8 +7,12 @@ export const BlockChain = {
 
         return new Promise((resolve, reject) => {
 
-            const bytecode = '0x' + result.contracts[contractName].bytecode;
+            const byteCode = '0x' + result.contracts[contractName].bytecode;
             
+            console.log('byteCode', byteCode);
+
+            console.log('contractName', contractName);
+
             web3.eth.getGasPrice((err, gasPrice) => {                
             
                 if(err) {
@@ -21,7 +25,7 @@ export const BlockChain = {
                     
                     console.log('current gasPrice (gas / ether)', gasPrice);
     
-                    web3.eth.estimateGas({data: bytecode}, (err, gasEstimate) => {
+                    web3.eth.estimateGas({data: byteCode}, (err, gasEstimate) => {
     
                         if(err) {
     
@@ -33,7 +37,7 @@ export const BlockChain = {
     
                             console.log('deployment web3.eth.estimateGas amount', gasEstimate);
                             
-                            resolve({gasPrice, gasEstimate});
+                            resolve({gasPrice, gasEstimate, byteCode});
                         }
 
                     });
@@ -45,8 +49,8 @@ export const BlockChain = {
     },
 
     getInflatedGas: function(result, contractName) {
-        return this.getGasPriceAndEstimate(result, contractName).then(({gasPrice, gasEstimate}) => {
-            return Math.round(1.2 * gasEstimate);
+        return this.getGasPriceAndEstimate(result, contractName).then(({gasPrice, gasEstimate, byteCode}) => {
+            return {inflatedGas: Math.round(1.2 * gasEstimate), gasPrice, gasEstimate, byteCode};
         });
     },
 
