@@ -22,20 +22,20 @@ class ManageLoanStatus extends Component {
             creditStatus: undefined
         }
 
-        //TODO find the right way to find the key from search    
+        //TODO find the right way to find the key from search
         this.loanAddress = props.location.search.replace('?loan=','');
 
         this.onCompilationComplete = this.onCompilationComplete.bind(this);
         this.onLoanStatusNotified = this.onLoanStatusNotified.bind(this);
         this.onApproveLoan = this.onApproveLoan.bind(this);
-        this.onEditIntrestAndEMI = this.onEditIntrestAndEMI.bind(this);    
+        this.onEditIntrestAndEMI = this.onEditIntrestAndEMI.bind(this);
         this.onSaveIntrestAndEMI = this.onSaveIntrestAndEMI.bind(this);
-    
+
     }
 
     onCompilationComplete(compiledObject) {
 
-        this.compiledObject = compiledObject; 
+        this.compiledObject = compiledObject;
     }
 
     onUpdateCredit(creditStatus) {
@@ -46,13 +46,13 @@ class ManageLoanStatus extends Component {
         this.setState({ lockOperation: true, progress: 'Processing credit' })
 
         return new Promise((resolve, reject) => {
-            
-            this.resolveUpdateCredit = resolve;
 
+            this.resolveUpdateCredit = resolve;
+            console.log("NEW CULPRIT 1");
             BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
-    
+              console.log("NEW CULPRIT 2");
                 loanInfo.updateCreditStatus(creditStatus,
-                    {from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas}, 
+                    {from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas},
                     (error, contract) => {
                         if(error) {
                             reject(error);
@@ -83,9 +83,9 @@ class ManageLoanStatus extends Component {
         return new Promise((resolve, reject) => {
 
             this.resolveApproveLoan = resolve;
-
+console.log("NEW CULPRIT 3");
             BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
-    
+    console.log("NEW CULPRIT 4");
                 loanInfo.approveLoan({from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas},
                     (error, contract) => {
                         if(error) {
@@ -95,8 +95,8 @@ class ManageLoanStatus extends Component {
                         }
                     }
                 );
-                
-                
+
+
             });
         }).then((result) => {
 
@@ -108,18 +108,18 @@ class ManageLoanStatus extends Component {
 
         })
 
-    }    
+    }
 
     onEditIntrestAndEMI() {
         this.setState({
             editIntrestAndEMI: true
-        })  
+        })
     }
 
     onSaveIntrestAndEMI() {
-        
+
         const { loanInfo } = this.state;
-        
+
         this.setState({ lockOperation: true, progress: 'Processing emi and intrested rate' })
 
         this.setState({
@@ -128,13 +128,13 @@ class ManageLoanStatus extends Component {
 
                 console.log('estimatedEMI', estimatedEMI);
                 console.log('estimatedIntrestRate', estimatedIntrestRate);
-                
+
                 return new Promise((resolve, reject) => {
 
                     this.resolveAddDisclosure = resolve;
-
+console.log("NEW CULPRIT 5");
                     BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
-            
+            console.log("NEW CULPRIT 6");
                         loanInfo.addDisclosure(estimatedIntrestRate, estimatedEMI,
                             {from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas},
                             (error, contract) => {
@@ -145,29 +145,29 @@ class ManageLoanStatus extends Component {
                                 }
                             }
                         );
-                                        
+
                     });
                 }).then((result) => {
-        
+
                     this.setState({ lockOperation: false, editIntrestAndEMI: false, progress: result })
-        
+
                 }).catch((error) => {
-        
+
                     this.setState({ lockOperation:false, editIntrestAndEMI: false, progress: 'Error occured in save ' + error.toString() })
-        
-                }) 
+
+                })
 
             })
         }, () => {
             this.setState({ onSaveData: undefined });
         });
-        
+
     }
 
     onLoanStatusNotified(loanInfo, applicant, loanProgram) {
         return new Promise((resolve, reject) => {
             if((loanInfo) && (!this.state.loanInfo)) {
-                
+
                 loanInfo.UpdatingCreditStatusFor((args) => {
                     this.resolveUpdateCredit(this.resolveUpdateCreditMessage);
                 });
@@ -208,7 +208,7 @@ class ManageLoanStatus extends Component {
             creditStatus
         } = this.state,
         operationDisabled = loanInfo === undefined || lockOperation;
-        
+
         return <div>
             <LoanStatus updateInfo = { updateInfo } onCompilationComplete = { this.onCompilationComplete } loanAddress = {this.loanAddress} onLoanStatusNotified = { this.onLoanStatusNotified } editIntrestAndEMI = { editIntrestAndEMI } onSaveData = { onSaveData } />
             {progress && <p align = "center">{ progress }</p>}

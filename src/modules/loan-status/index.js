@@ -8,7 +8,7 @@ class LoanStatus extends Component {
 
     constructor(props) {
         super(props);
-        
+
         this.loanAddress = props.loanAddress;
 
         this.state = {
@@ -46,17 +46,17 @@ class LoanStatus extends Component {
     }
 
     componentWillReceiveProps(props) {
-        
+
         this.setState({
             editIntrestAndEMI: props.editIntrestAndEMI,
             ...props.updateInfo
         });
-        
+
         if(props.onSaveData) {
             props.onSaveData({ ...this.state });
         }
     }
-    
+
     onDataChange(state) {
         this.setState({
             estimatedEMI: parseInt(state.form.estimatedEMI.value, 10) || 0,
@@ -73,7 +73,7 @@ class LoanStatus extends Component {
     onLoanInfoFound(loanInfoFound) {
 
         if(loanInfoFound.address) {
-            
+
             const { onLoanStatusNotified } = this.props;
 
             this.setState({
@@ -94,7 +94,7 @@ class LoanStatus extends Component {
             if(onLoanStatusNotified) {
                 onLoanStatusNotified(loanInfoFound, this.state.applicant, this.state.loanProgram).catch();
             }
-
+            console.log("CULPRIT 1");
             BlockChain.getContract(this.compiledObject,':Applicant', loanInfoFound.applicantContractAddress()).then((applicant) => {
                 const applicantInfo = applicant.getApplicantDetails();
                 this.setState({
@@ -109,14 +109,14 @@ class LoanStatus extends Component {
                 if(onLoanStatusNotified) {
                     onLoanStatusNotified(this.state.loanInfo, applicant, this.state.loanProgram).catch();
                 }
-     
+
             }).catch((error) => {
                 this.setState({
                     applicant: undefined,
                     invalidLoanInformation: true
                 });
             });
-            
+            console.log("CULPRIT 2");
             BlockChain.getContract(this.compiledObject,':LoanProgram', loanInfoFound.loanProgramAddress()).then((loanProgram) => {
                 this.setState({
                     loanProgram,
@@ -126,40 +126,38 @@ class LoanStatus extends Component {
                 if(onLoanStatusNotified) {
                     onLoanStatusNotified(this.state.loanInfo, this.state.applicant, loanProgram).catch();
                 }
-       
+
             }).catch((error) => {
                 this.setState({
                     loanProgram: undefined,
                     invalidLoanInformation: true
                 });
-            });            
+            });
 
         }
     }
 
     onCompilationComplete(compiledObject) {
-        
+        console.log("MOTHER OF ALL CULPRITS");
         const { onCompilationComplete } = this.props;
 
         this.compiledObject = compiledObject;
 
         this.readLoanInfo();
 
-        if(!this.props.onLoanStatusNotified) {
-            setInterval(this.readLoanInfo.bind(this), 3000);
-        }
+      
 
         if(onCompilationComplete) {
             onCompilationComplete(compiledObject);
         }
-        
+
     }
-    
+
     readLoanInfo() {
 
         const { compiledObject } = this,
             { loanAddress } = this.state;
-
+        console.log("CULPRIT 3");
         BlockChain.getContract(compiledObject, ':Loan', loanAddress).then((loanInfo) => {
             loanInfo.loanType();
             this.onLoanInfoFound(loanInfo);
@@ -174,7 +172,7 @@ class LoanStatus extends Component {
     }
 
     render() {
-        const { 
+        const {
                 loanAddress, invalidLoanInformation,
                 applicantAddress, loanApproved,
                 estimatedEMI, estimatedIntrestRate,
@@ -189,7 +187,7 @@ class LoanStatus extends Component {
                 moduleTitle: 'Loan status',
                 contractName: ':Loan',
                 processCommandText: 'Ok',
-                form: {   
+                form: {
                     loanAddress: {title: 'Loan Reference' , value: loanAddress, readOnly: true},
                     loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
                     estimatedEMI: {title: 'Emi estimation' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
@@ -200,7 +198,7 @@ class LoanStatus extends Component {
                     loanType: {title: 'Loan type' , value: loanType, readOnly: true},
                     loanReceived: {title: 'Loan received status' , value: loanReceived ? 'Received' : 'Not received', readOnly: true}
                 },
-                associateForm: {   
+                associateForm: {
                     loanProgramAddress: {title: 'Loan Program reference' , value: loanProgramAddress, readOnly: true},
                     loanProgram: {title: 'Loan Program' , value: loanProgramName, readOnly: true},
                     applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
@@ -211,7 +209,7 @@ class LoanStatus extends Component {
                     income: {title: 'Annual Income', value: income, readOnly: true}
                 }
             }
-            
+
         return <div>
             {(!invalidLoanInformation) && <ContractForm { ...props } onCompilationComplete = { this.onCompilationComplete } onSubmit = { this.onLoanProcess } onDataChange = { this.onDataChange } />}
             {invalidLoanInformation && <p align="center">
