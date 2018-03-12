@@ -27,7 +27,7 @@ class LoanStatus extends Component {
             loanReceived: '',
             applicant: undefined,
             name: '',
-            sex: '',
+            Gender: '',
             dob: '',
             zip: '',
             income: '',
@@ -100,7 +100,7 @@ class LoanStatus extends Component {
                 this.setState({
                     applicant: applicant,
                     name: applicantInfo[0],
-                    sex: applicantInfo[1],
+                    Gender: applicantInfo[1],
                     dob: applicantInfo[2],
                     zip: applicantInfo[3],
                     income: applicantInfo[4]
@@ -179,7 +179,7 @@ class LoanStatus extends Component {
                 goodCredit, loanAmount,
                 loanPeriodInYears, loanProgramAddress,
                 loanType, loanReceived,
-                name, sex, dob, zip, income, loanProgramName,
+                name, Gender, dob, zip, income, loanProgramName,
                 editIntrestAndEMI
             } = this.state,
             props = {
@@ -203,7 +203,7 @@ class LoanStatus extends Component {
                     loanProgram: {title: 'Loan Program' , value: loanProgramName, readOnly: true},
                     applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
                     name: {title: 'Name' , value: name, readOnly: true},
-                    sex: {title: 'Sex', value: sex, readOnly: true},
+                    Gender: {title: 'Sex', value: Gender, readOnly: true},
                     dob: {title: 'DOB', value: dob, readOnly: true},
                     zip: {title: 'Zip', value: zip, readOnly: true},
                     income: {title: 'Annual Income', value: income, readOnly: true}

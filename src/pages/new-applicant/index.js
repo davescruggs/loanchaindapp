@@ -30,7 +30,7 @@ class NewApplicant extends Component {
             processCommandText: 'Submit Details',
             form: {
                 name: {title: 'Name' , value: 'name'},
-                sex: {title: 'Sex', value: 'sex'},
+                Gender: {title: 'Sex', value: 'Gender'},
                 dob: {title: 'DOB', value: 'dob'},
                 street1: {title: 'Street 1', value: 'street1'},
                 street2: {title: 'Street 2', value: 'street2'},
