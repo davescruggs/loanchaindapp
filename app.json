@@ -1,0 +1,16 @@
+{
+  "name": "Loan Application DApp",
+  "description": "A Loan Application Powered by Blockchain",
+  "repository": "https://github.com/ganeshramr/loanchain",
+  "keywords": ["node", "express", "blockchain","ethereum"],
+  "env": {
+    "BLOCKCHAIN_SERVICE_URL": {
+      "description": "A blockchain URL to deploy the contracts to.",
+      "value" :"http://alpha-blockchain.herokuapp.com/blockchain"
+    },
+    "LONPROGRAM_CONTRACT_ID": {
+      "description": "The number of processes to run.",
+      "value": "0xd643a7b26b8e97d1f345078abdf7c817bdf9b61a"
+    }
+  }
+}
