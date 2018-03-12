@@ -9,7 +9,7 @@
       "value" :"http://alpha-blockchain.herokuapp.com/blockchain"
     },
     "LONPROGRAM_CONTRACT_ID": {
-      "description": "The number of processes to run.",
+      "description": "The loan program (smart contract) supposedly deployed by bank.",
       "value": "0xd643a7b26b8e97d1f345078abdf7c817bdf9b61a"
     }
   }
