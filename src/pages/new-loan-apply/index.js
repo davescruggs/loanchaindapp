@@ -137,7 +137,7 @@ class NewLoanDetails extends Component {
                 Not a valid applicant or applicant not found<br />
                 <Link to = '/'>Register new applicant</Link>
             </p>}
-            { redirectToLoanStatus && <Redirect to={redirectToLoanStatus} /> }}
+            { redirectToLoanStatus && <Redirect to={redirectToLoanStatus} /> }
         </div>
     }
 }

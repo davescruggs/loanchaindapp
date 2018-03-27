@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import BlockChain from '../../lib/blockchain';
 import Solidity from '../../lib/solidity';
 import { web3Connection } from '../../web3';
@@ -46,7 +47,7 @@ class ContractForm extends Component {
     componentWillMount() {
 
         Solidity.autoCompileContract(this.state.contractFile).then((compilationResult) => {
-            
+
             console.log('compilationResult', compilationResult);
 
             this.setState({ compilationResult });
@@ -64,7 +65,7 @@ class ContractForm extends Component {
         });
 
         web3Connection.watch((connected) => {
-            this.setState({ connected });            
+            this.setState({ connected });
         }).catch();
 
     }
@@ -83,7 +84,7 @@ class ContractForm extends Component {
     }
 
     onUpdateContract(newContract, abi) {
-        
+
         if(!newContract.address) {
             this.setState({
                 statusMessage: 'Contract transaction send and waiting for mining...',
@@ -91,8 +92,8 @@ class ContractForm extends Component {
                 isDeployInProgress: true,
                 contractABI: abi,
                 thisAddress: 'waiting to be mined for contract address...'
-            });    
-            
+            });
+
         } else {
             this.setState({
                 statusMessage: 'Contract deployed successfully !!! ',
@@ -104,7 +105,7 @@ class ContractForm extends Component {
 
             this.onContractCreated(newContract);
         }
-        
+
     }
 
     onContractCreated(contract) {
@@ -121,7 +122,7 @@ class ContractForm extends Component {
     }
 
     compileAndDeployCarContract() {
-        
+
         if(this.props.onSubmit) {
 
             this.setState({
@@ -130,7 +131,7 @@ class ContractForm extends Component {
             });
 
             this.props.onSubmit(this.state.form).then((response) => {
-                
+
                 if(!response.redirect) {
                     this.setState({
                         statusMessage: response,
@@ -142,7 +143,7 @@ class ContractForm extends Component {
                 this.setState({
                     statusMessage: error,
                     isDeployInProgress: false
-                });                
+                });
             })
 
         } else {
@@ -158,7 +159,7 @@ class ContractForm extends Component {
                 isDeployInProgress: true
             });
 
-            
+
             BlockChain.getGasPriceAndEstimate(compilationResult, contractName).then(({gasPrice, gasEstimate}) => {
 
                 BlockChain.deployContract(contractInput, compilationResult, this.onUpdateContract, gasPrice, gasEstimate, contractName)
@@ -166,7 +167,7 @@ class ContractForm extends Component {
                     this.setState({
                         statusMessage: 'deployment error: ' + error,
                         isDeployInProgress: false
-                    });                    
+                    });
                 });
 
             }).catch((error) => {
@@ -180,14 +181,15 @@ class ContractForm extends Component {
     }
 
     onDataChange(field, { target }) {
-        const { value } = target,   
+        const { value } = target,
+
             updateState = { ...this.state.form };
 
         console.log('onDataChange', field);
         updateState[field].value = updateState[field].validate ? updateState[field].validate(value) : value;
 
         this.setState( { form: updateState } );
-        
+
         if(this.props.onDataChange) {
             this.props.onDataChange({ ...this.state });
         }
@@ -196,63 +198,57 @@ class ContractForm extends Component {
     renderForm(form) {
         return Object.keys(form).map((item) => {
             const { title, value, readOnly } = form[item];
-            return <div key = {item} >
-                <label>{title}</label>
-                <input type = "text"  className = "form-control" value = { value } onChange = { this.onDataChange.bind(this, item) } readOnly = { readOnly } /> <br />
+            return <div key = {item} className="form-group col-sm-6">
+                <label for={"input-" + item}>{title}</label>
+                <input id={"input-" + item} type="text" class="form-control form-control-sm" placeholder={ value } onChange = { this.onDataChange.bind(this, item) } readOnly = { readOnly } />
             </div>
         });
     }
-    
+
     render() {
-        
-        const { 
+
+        const {
             moduleTitle,
             processCommandText,
-            compilationResult,            
+            compilationResult,
             connected,
             isDeployInProgress,
             form,
             associateForm,
             commandDisabled
         } = this.state;
-
         return (
-        <div>
+        <Fragment>
             {(compilationResult && connected) && <div>
+            <p class="module-title">{ moduleTitle }</p>
+            <div class="row">
+              <div className = "col-sm-8 col-md-6">
+                <div class="row">
+                { this.renderForm(form) }
+                </div>
+                {(!associateForm) && <input type = "button" className = "btn btn-primary" value = { processCommandText } onClick = { this.compileAndDeployCarContract } disabled = {isDeployInProgress || commandDisabled} />}
+              </div>
 
-                <div className = "container">
-                    <div className = "row">
-                        <h3>{ moduleTitle }</h3> <br />
-                        
-                        <div className = "col-sm-6">
-                            <div className = "form-group">
-                                
-                                { this.renderForm(form) }
+              {associateForm && <div className = "col-sm-8 col-md-6">
+                <div class="row">
+                  { this.renderForm(associateForm) }
+               </div>
+              </div>
+              }
 
-                                {(!associateForm) && <input type = "button" className = "btn btn-primary" value = { processCommandText } onClick = { this.compileAndDeployCarContract } disabled = {isDeployInProgress || commandDisabled} />}
-
-                            </div>
-                        </div>
-
-                        {associateForm && <div className = "col-sm-6">
-                            { this.renderForm(associateForm) }
-                        </div>}
-
-                        {(!associateForm) && <div className = "col-sm-6">
-                            {isDeployInProgress && <img src = {loader} alt = "" />}
-                        </div>}
-                    </div>
-                </div>                
-
-
-
-            </div>}
+              {(!associateForm) && <div className = "col-sm-8 col-md-6 col-lg-4">
+                  {isDeployInProgress && <img src = {loader} alt = "" />}
+              </div>}
+            </div>
+            </div>
+              }
 
             {(!(compilationResult && connected)) && <p align = "center">
                 <img src = {loader} alt = "" />
-            </p>}
+            </p>
+            }
 
-        </div>
+        </Fragment>
         );
     }
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import './App.css';
 import { web3Connection } from './web3';
@@ -8,7 +8,7 @@ import UserLoanStatus from './pages/user-loan-status';
 import ManageLoanStatus from './pages/manage-loan-status';
 
 class App extends Component {
-  
+
   constructor(props) {
       super(props);
       this.state = {
@@ -18,34 +18,40 @@ class App extends Component {
 
   componentDidMount() {
       web3Connection.watch((connected) => {
-          this.setState({ connected });            
+          this.setState({ connected });
       }).catch()
   }
-  
+
   render() {
 
     const { connected } = this.state;
 
     return (
 
-      <div>
-        <div className = "jumbotron jumbotron-fluid">
-          <div className = "container">
-            <h2 className = "display-4">Loan Management private blockchain</h2>            
-            <p className = "lead">{connected && "Loan management"}{!connected && "Connecting to Loanchain"}</p>
+      <Fragment>
+        <nav className="navbar navbar-expand-md navbar navbar-dark bg-dark">
+          <a className="navbar-brand" href="#">Loan Management private blockchain</a>
+        </nav>
+        <div className="container">
+          <div className="card-deck">
+            <div className="card">
+              <div className="card-body">
+                <h3 className="card-title">
+                  {connected && "Loan management"}{!connected && "Connecting to Loanchain"}
+                </h3>
+                <BrowserRouter>
+                  <Switch>
+                    <Route exact path = '/' component = { NewApplicant } />
+                    <Route exact path = '/loan' component = { NewLoanDetails } />
+                    <Route exact path = '/loanstatus' component = { UserLoanStatus } />
+                    <Route exact path = '/manageloan' component = { ManageLoanStatus } />
+                  </Switch>
+                </BrowserRouter>
+              </div>
+            </div>
           </div>
         </div>
-
-        <BrowserRouter>
-            <Switch>
-                <Route exact path = '/' component = { NewApplicant } />
-                <Route exact path = '/loan' component = { NewLoanDetails } />
-                <Route exact path = '/loanstatus' component = { UserLoanStatus } />
-                <Route exact path = '/manageloan' component = { ManageLoanStatus } />
-            </Switch>
-        </BrowserRouter>
-
-      </div>
+      </Fragment>
 
     );
   }

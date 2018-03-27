@@ -190,8 +190,8 @@ class LoanStatus extends Component {
                 form: {
                     loanAddress: {title: 'Loan Reference' , value: loanAddress, readOnly: true},
                     loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
-                    estimatedEMI: {title: 'Emi estimation' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
-                    estimatedIntrestRate: {title: 'Intrest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
+                    estimatedEMI: {title: 'EMI estimation' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
+                    estimatedIntrestRate: {title: 'Interest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
                     goodCredit: {title: 'Credit status' , value: goodCredit, readOnly: true},
                     loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
                     loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
@@ -203,7 +203,7 @@ class LoanStatus extends Component {
                     loanProgram: {title: 'Loan Program' , value: loanProgramName, readOnly: true},
                     applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
                     name: {title: 'Name' , value: name, readOnly: true},
-                    Gender: {title: 'Sex', value: Gender, readOnly: true},
+                    Gender: {title: 'Gender', value: Gender, readOnly: true},
                     dob: {title: 'DOB', value: dob, readOnly: true},
                     zip: {title: 'Zip', value: zip, readOnly: true},
                     income: {title: 'Annual Income', value: income, readOnly: true}
