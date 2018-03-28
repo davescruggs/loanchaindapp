@@ -190,7 +190,7 @@ class LoanStatus extends Component {
                 form: {
                     loanAddress: {title: 'Loan Reference' , value: loanAddress, readOnly: true},
                     loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
-                    estimatedEMI: {title: 'EMI estimation' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
+                    estimatedEMI: {title: 'Monthly payment' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
                     estimatedIntrestRate: {title: 'Interest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
                     goodCredit: {title: 'Credit status' , value: goodCredit, readOnly: true},
                     loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
