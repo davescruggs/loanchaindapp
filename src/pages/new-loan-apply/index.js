@@ -46,9 +46,9 @@ class NewLoanDetails extends Component {
                 BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
 
                     loanProgram.apply(applicant.address,
-                        formData.loanType.value,
-                        formData.loanAmount.value,
-                        formData.loanPeriod.value,
+                        formData[0].loanType.value,
+                        formData[0].loanAmount.value,
+                        formData[0].loanPeriod.value,
                         {from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas}
                     );
 
@@ -122,23 +122,41 @@ class NewLoanDetails extends Component {
                 contractFile : ContractFile,
                 moduleTitle: 'Please specify the loan information',
                 contractName: ':Loan',
-                processCommandText: 'Submit Loan Application',
-                form: {
-                    applicantName: {title: 'Applicant Name' , value: applicantName + ' [' + applicantAddress + ']', readOnly: true},
-                    programName: {title: 'Program Name' , value: programName + ' [' + loanProgramAddress + ']', readOnly: true},
-                    loanType: {title: 'Type', value: '', readOnly},
-                    loanAmount: {title: 'Amount', value: '', readOnly, validate: (value) => {return parseInt(value, 10) || 0} },
-                    loanPeriod: {title: 'Period in years', readOnly, value: '', validate: (value) => {return parseInt(value, 10) || 0} }
+                processCommandText: 'Submit',
+                form: [
+                    {
+                        applicantName: {title: 'Applicant Name', value: applicantName + ' [' + applicantAddress + ']', readOnly: true, className: 'col-sm-12'},
+                        programName: {title: 'Program Name' , value: programName + ' [' + loanProgramAddress + ']', readOnly: true, className: 'col-sm-12'},
+                        loanType: {title: 'Type', value: '', readOnly, className: 'col-sm-6'},
+                        loanAmount: {title: 'Amount', value: '', readOnly, validate: (value) => {return parseInt(value, 10) || 0}, className: 'col-sm-6'},
+                        loanPeriod: {title: 'Period in years', readOnly, value: '', validate: (value) => {return parseInt(value, 10) || 0}, className: 'col-sm-6'}
+                    }
+                ]
             }
-        }
-        return <div>
-            {(!invalidApplicant) && <ContractForm { ...props } onCompilationComplete = { this.onCompilationComplete } onSubmit = { this.onSubmitLoanApplication } commandDisabled = { readOnly } />}
-            {invalidApplicant && <p align="center">
-                Not a valid applicant or applicant not found<br />
-                <Link to = '/'>Register new applicant</Link>
-            </p>}
-            { redirectToLoanStatus && <Redirect to={redirectToLoanStatus} /> }
-        </div>
+        return (
+            <div class="card mb-2">
+                <div class="card-header" id="header-apply" data-toggle="collapse" data-target="#body-apply" aria-expanded="false" aria-controls="body-apply">
+                    <p class="mb-0 py-2 font-weight-light">
+                        <i class="icon-folder-apply"></i> {props.moduleTitle}
+                    </p>
+                </div>
+                <div id="body-apply" class="" aria-labelledby="header-apply">
+                    <div class="card-body">
+                        {(!invalidApplicant) &&
+                            <ContractForm { ...props }
+                                onCompilationComplete = { this.onCompilationComplete }
+                                onSubmit = { this.onSubmitLoanApplication }
+                                commandDisabled = { readOnly } />}
+                        {invalidApplicant &&
+                            <p align="center">
+                            Not a valid applicant or applicant not found<br />
+                            <Link to = '/'>Register new applicant</Link>
+                            </p>}
+                        { redirectToLoanStatus && <Redirect to={redirectToLoanStatus} /> }
+                    </div>
+                </div>
+            </div>
+        );
     }
 }
 

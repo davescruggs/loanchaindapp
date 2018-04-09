@@ -1,91 +1,210 @@
 body {
-  font-family: 'Ubuntu', sans-serif;
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    color: #434A54;
+}
+
+h5, h6 {
+    font-weight: 700;
+}
+
+.main {
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: cover;
+    background-attachment: fixed;
+    min-height: 100vh;
 }
 
 .bg-dark {
-  background: #3E4551 !important;
+    background: #333 !important;
 }
 
 .module-title {
-  color: #3F729B;
+    color: #3F729B;
 }
 
 label {
-  margin: 0;
+    margin: 0;
+    font-weight: 300;
+    font-size: 14px;
 }
 
-.btn {
-  padding: .84rem 2.14rem;
-  font-size: .81rem;
-  -webkit-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
-  margin: .375rem;
-  border: 0;
-  border-radius: .125rem;
-  cursor: pointer;
-  text-transform: uppercase;
-  white-space: normal;
-  word-wrap: break-word;
-  color: #fff!important
+.btn:active, .btn:focus, .btn:hover {
+    outline: 0
 }
 
-.btn:active,
-.btn:focus,
-.btn:hover {
-  outline: 0
+.btn-secondary,
+.btn-secondary:active,
+.btn-secondary:not(:disabled):not(.disabled):active {
+  background-color: #AAB2BD;
+  border-color: #AAB2BD;
 }
 
-.btn:hover {
-  box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0 rgba(0, 0, 0, .15);
+.btn-secondary:focus,
+.btn-secondary:hover {
+  background-color: #CCD1D9;
+  border-color: #CCD1D9;
 }
 
-.btn-primary {
-  background-color: #59698d !important;
-  color: #fff!important
-}
-
-.btn-primary:hover {
-  background-color: #63759d;
-  border-color: #63759d;
-}
-
+.btn-primary,
 .btn-primary.active,
+.btn-primary.disabled,
 .btn-primary:active,
-.btn-primary:focus {
-  background-color: #323a4e
+.btn-primary[disabled] {
+  background-color: #3bafda;
+  border-color: #3bafda
+}
+
+.btn-primary:focus,
+.btn-primary:hover,
+.open .dropdown-toggle.btn-primary {
+  background-color: #4fc1e9;
+  border-color: #4fc1e9
+}
+
+.btn-info,
+.btn-info.active,
+.btn-info.disabled,
+.btn-info:active,
+.btn-info[disabled] {
+  background-color: #37bc9b;
+  border-color: #37bc9b
+}
+
+.btn-info:focus,
+.btn-info:hover,
+.open .dropdown-toggle.btn-info {
+  background-color: #48cfad;
+  border-color: #48cfad
 }
 
 
+.btn-success,
+.btn-success:active,
+.btn-success:not(:disabled):not(.disabled):active {
+  background-color: #8cc152;
+  border-color: #8cc152;
+}
+
+.btn-success:focus,
+.btn-success:hover {
+  background-color: #a0d468;
+  border-color: #a0d468;
+}
+
+.btn-danger,
+.btn-danger:active,
+.btn-danger:not(:disabled):not(.disabled):active {
+  background-color: #E9573F;
+  border-color: #E9573F;
+}
+
+.btn-danger:focus,
+.btn-danger:hover {
+  background-color: #FC6E51;
+  border-color: #FC6E51;
+}
+
+.container {
+    max-width: 800px;
+}
+
+.border-light {
+    border-color: #d1d7dc !important;
+}
+
+.form-row {
+    margin-right: -1em;
+    margin-left: -1em;
+}
+
+.form-row>.col, .form-row>[class*=col-] {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.form-control {
+    border-color: #abafb3;
+}
+
+.form-control[readOnly] {
+    background: none;
+    border: 0;
+    cursor: default;
+    outline: 0;
+    padding-left: 0;
+}
+
+.form-control[readOnly]:focus {
+    outline: 0;
+}
+
+/* card layout */
+
+.card {
+    border: 0;
+}
+
+.card-header {
+    padding: .125rem 1.25rem;
+    border: 0;
+    background-color: #e6e9ed;
+    cursor: pointer;
+    transition: .15s ease-in-out;
+    position: relative;
+}
+
+.card-header::after {
+    content: "";
+    position: absolute;
+    right: 1em;
+    top: 50%;
+    transition: .15s ease-in-out;
+    transform: translateY(-50%) rotate(45deg);
+    width: .5em;
+    height: .5em;
+    border-top: 1px solid #434A54;
+    border-left: 1px solid #434A54;
+}
+
+.card-header.collapsed {
+    background-color: #3bafda;
+    color: #F5F7FA;
+}
+
+.card-header.collapsed::after {
+    transform: translateY(-50%) rotate(-135deg);
+}
 
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
 }
 
 .App-header {
-  background-color: #222;
-  height: 60px;
-  padding: 20px;
-  color: white;
+    background-color: #222;
+    height: 60px;
+    padding: 20px;
+    color: white;
 }
 
 .App-title {
-  font-size: 1.5em;
+    font-size: 1.5em;
 }
 
 .App-intro {
-  font-size: large;
+    font-size: large;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }

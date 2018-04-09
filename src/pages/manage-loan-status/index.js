@@ -120,7 +120,7 @@ console.log("NEW CULPRIT 3");
 
         const { loanInfo } = this.state;
 
-        this.setState({ lockOperation: true, progress: 'Processing emi and intrested rate' })
+        this.setState({ lockOperation: true, progress: 'Processing emi and interest rate' })
 
         this.setState({
             onSaveData: ((state) => {
@@ -141,7 +141,7 @@ console.log("NEW CULPRIT 5");
                                 if(error) {
                                     reject(error);
                                 } else {
-                                    this.resolveAddDisclosureMessage = 'Estimated Intrest Rate and Estimated EMI saved successfully!!!';
+                                    this.resolveAddDisclosureMessage = 'Estimated Interest Rate and Estimated EMI saved successfully!!!';
                                 }
                             }
                         );
@@ -210,14 +210,21 @@ console.log("NEW CULPRIT 5");
         operationDisabled = loanInfo === undefined || lockOperation;
 
         return <div>
-            <LoanStatus updateInfo = { updateInfo } onCompilationComplete = { this.onCompilationComplete } loanAddress = {this.loanAddress} onLoanStatusNotified = { this.onLoanStatusNotified } editIntrestAndEMI = { editIntrestAndEMI } onSaveData = { onSaveData } />
-            {progress && <p align = "center">{ progress }</p>}
-            <p align = "center">
+            <LoanStatus updateInfo = { updateInfo }
+                onCompilationComplete = { this.onCompilationComplete }
+                loanAddress = {this.loanAddress}
+                onLoanStatusNotified = { this.onLoanStatusNotified }
+                editIntrestAndEMI = { editIntrestAndEMI }
+                onSaveData = { onSaveData } />
+            {progress &&
+                <div className="alert alert-success alert-dismissable fade show"
+                    role="alert">{ progress }</div>}
+            <p className="text-center">
                 <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-primary" value = "Approve Credit" disabled = { operationDisabled } />&nbsp;&nbsp;&nbsp;
                 <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-primary" value = "Decline Credit" disabled = { operationDisabled } />&nbsp;&nbsp;&nbsp;
                 <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-primary" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />&nbsp;&nbsp;&nbsp;
-                {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-primary" value = "Edit Intrest and EMI" disabled = { operationDisabled } />}
-                {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-primary" value = "Save Intrest and EMI" disabled = { operationDisabled } />}
+                {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-primary" value = "Edit Interest and EMI" disabled = { operationDisabled } />}
+                {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-primary" value = "Save Interest and EMI" disabled = { operationDisabled } />}
             </p>
         </div>
     }

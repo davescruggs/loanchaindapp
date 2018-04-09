@@ -145,7 +145,7 @@ class LoanStatus extends Component {
 
         this.readLoanInfo();
 
-      
+
 
         if(onCompilationComplete) {
             onCompilationComplete(compiledObject);
@@ -188,35 +188,57 @@ class LoanStatus extends Component {
                 contractName: ':Loan',
                 processCommandText: 'Ok',
                 form: {
-                    loanAddress: {title: 'Loan Reference' , value: loanAddress, readOnly: true},
-                    loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
-                    estimatedEMI: {title: 'Monthly payment' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
-                    estimatedIntrestRate: {title: 'Interest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
-                    goodCredit: {title: 'Credit status' , value: goodCredit, readOnly: true},
-                    loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
-                    loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
-                    loanType: {title: 'Loan type' , value: loanType, readOnly: true},
-                    loanReceived: {title: 'Loan received status' , value: loanReceived ? 'Received' : 'Not received', readOnly: true}
+                    "Reference IDs": {
+                        loanAddress: {title: 'Loan Reference', value: loanAddress, readOnly: true},
+                        loanProgramAddress: {title: 'Loan Program reference', value: loanProgramAddress, readOnly: true},
+                        applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
+                    },
+                    "Status": {
+                        loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
+                        goodCredit: {title: 'Credit status' , value: goodCredit, readOnly: true},
+                        loanReceived: {title: 'Loan received status' , value: loanReceived ? 'Received' : 'Not received', readOnly: true}
+                    },
+                    "Applicant Info": {
+                        name: {title: 'Full Name' , value: name, readOnly: true},
+                        Gender: {title: 'Gender', value: Gender, readOnly: true},
+                        dob: {title: 'DOB', value: dob, readOnly: true},
+                        zip: {title: 'Zip', value: zip, readOnly: true},
+                        income: {title: 'Annual Income', value: income, readOnly: true}
+                    },
+                    "Loan Info": {
+                        loanProgram: {title: 'Loan Program' , value: loanProgramName, readOnly: true},
+                        loanType: {title: 'Loan type' , value: loanType, readOnly: true},
+                        loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
+                        loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
+                        estimatedEMI: {title: 'Monthly payment' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
+                        estimatedIntrestRate: {title: 'Interest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
+                    }
                 },
-                associateForm: {
-                    loanProgramAddress: {title: 'Loan Program reference' , value: loanProgramAddress, readOnly: true},
-                    loanProgram: {title: 'Loan Program' , value: loanProgramName, readOnly: true},
-                    applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
-                    name: {title: 'Name' , value: name, readOnly: true},
-                    Gender: {title: 'Gender', value: Gender, readOnly: true},
-                    dob: {title: 'DOB', value: dob, readOnly: true},
-                    zip: {title: 'Zip', value: zip, readOnly: true},
-                    income: {title: 'Annual Income', value: income, readOnly: true}
-                }
+                associateForm: {}
             }
-
-        return <div>
-            {(!invalidLoanInformation) && <ContractForm { ...props } onCompilationComplete = { this.onCompilationComplete } onSubmit = { this.onLoanProcess } onDataChange = { this.onDataChange } />}
-            {invalidLoanInformation && <p align="center">
-                Not a valid loan or loan not found<br />
-                <Link to = '/'>Apply new loan</Link>
-            </p>}
-        </div>
+        return (
+            <div class="card mb-2">
+                <div class="card-header" id="header-create" data-toggle="collapse" data-target="#body-create" aria-expanded="false" aria-controls="body-create">
+                    <p class="mb-0 py-2 font-weight-light">
+                        <i class="icon-folder-create"></i> {props.moduleTitle}
+                    </p>
+                </div>
+                <div id="body-create" class="" aria-labelledby="header-create">
+                    <div class="card-body">
+                        {(!invalidLoanInformation) &&
+                            <ContractForm { ...props }
+                                onCompilationComplete = { this.onCompilationComplete }
+                                onSubmit = { this.onLoanProcess }
+                                onDataChange = { this.onDataChange } />}
+                        {invalidLoanInformation &&
+                            <p align="center">
+                            Not a valid loan or loan not found<br />
+                            <Link to = '/'>Apply new loan</Link>
+                        </p>}
+                    </div>
+                </div>
+            </div>
+        );
     }
 }
 
