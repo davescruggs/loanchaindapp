@@ -46,9 +46,9 @@ class NewLoanDetails extends Component {
                 BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
 
                     loanProgram.apply(applicant.address,
-                        formData[0].loanType.value,
-                        formData[0].loanAmount.value,
-                        formData[0].loanPeriod.value,
+                        formData.loanType.value,
+                        formData.loanAmount.value,
+                        formData.loanPeriod.value,
                         {from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas}
                     );
 
@@ -123,15 +123,13 @@ class NewLoanDetails extends Component {
                 moduleTitle: 'Please specify the loan information',
                 contractName: ':Loan',
                 processCommandText: 'Submit',
-                form: [
-                    {
-                        applicantName: {title: 'Applicant Name', value: applicantName + ' [' + applicantAddress + ']', readOnly: true, className: 'col-sm-12'},
-                        programName: {title: 'Program Name' , value: programName + ' [' + loanProgramAddress + ']', readOnly: true, className: 'col-sm-12'},
-                        loanType: {title: 'Type', value: '', readOnly, className: 'col-sm-6'},
-                        loanAmount: {title: 'Amount', value: '', readOnly, validate: (value) => {return parseInt(value, 10) || 0}, className: 'col-sm-6'},
-                        loanPeriod: {title: 'Period in years', readOnly, value: '', validate: (value) => {return parseInt(value, 10) || 0}, className: 'col-sm-6'}
-                    }
-                ]
+                form: {
+                    applicantName: {title: 'Applicant Name', value: applicantName + ' [' + applicantAddress + ']', readOnly: true, className: 'col-sm-12'},
+                    programName: {title: 'Program Name' , value: programName + ' [' + loanProgramAddress + ']', readOnly: true, className: 'col-sm-12'},
+                    loanType: {title: 'Type', value: '', readOnly, className: 'col-sm-6'},
+                    loanAmount: {title: 'Amount', value: '', readOnly, validate: (value) => {return parseInt(value, 10) || 0}, className: 'col-sm-6'},
+                    loanPeriod: {title: 'Period in years', readOnly, value: '', validate: (value) => {return parseInt(value, 10) || 0}, className: 'col-sm-6'}
+                }
             }
         return (
             <div class="card mb-2">

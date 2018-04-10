@@ -219,12 +219,12 @@ console.log("NEW CULPRIT 5");
             {progress &&
                 <div className="alert alert-success alert-dismissable fade show"
                     role="alert">{ progress }</div>}
-            <p className="text-center">
-                <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-primary" value = "Approve Credit" disabled = { operationDisabled } />&nbsp;&nbsp;&nbsp;
-                <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-primary" value = "Decline Credit" disabled = { operationDisabled } />&nbsp;&nbsp;&nbsp;
-                <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-primary" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />&nbsp;&nbsp;&nbsp;
-                {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-primary" value = "Edit Interest and EMI" disabled = { operationDisabled } />}
-                {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-primary" value = "Save Interest and EMI" disabled = { operationDisabled } />}
+            <p className="d-flex">
+                {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success mr-2" value = "Edit Interest and EMI" disabled = { operationDisabled } />}
+                {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success mr-2" value = "Save Interest and EMI" disabled = { operationDisabled } />}
+                <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-success mr-2" value = "Approve Credit" disabled = { operationDisabled } />
+                <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-success mr-2" value = "Decline Credit" disabled = { operationDisabled } />
+                <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-success ml-auto" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />
             </p>
         </div>
     }

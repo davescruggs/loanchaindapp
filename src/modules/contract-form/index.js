@@ -181,51 +181,60 @@ class ContractForm extends Component {
     }
 
     onDataChange(field, { target }) {
-        // const { value } = target,
-        // updateState = { ...this.state.form };
-        // console.log('onDataChange', field);
-        // updateState[field].value = updateState[field].validate ? updateState[field].validate(value) : value;
-        //
-        // this.setState( { form: updateState } );
-        //
+        const { value } = target,
+        updateState = { ...this.state.form };
+        console.log('onDataChange', field);
+        updateState[field].value = updateState[field].validate ? updateState[field].validate(value) : value;
+
+        this.setState( { form: updateState } );
+
         if(this.props.onDataChange) {
             this.props.onDataChange({ ...this.state });
         }
     }
 
+    // renderForm(form) {
+    //     const { associateForm } = this.state;
+    //     return Object.keys(form).map((sections, index) => {
+    //         let section = form[sections];
+    //         return (
+    //             <Fragment>
+    //                 {isNaN(Number(sections)) &&
+    //                     <h6>{sections}</h6>}
+    //                 <div key={section}
+    //                     className={(!associateForm) ?
+    //                         "form-row mb-3": "mb-3 border-bottom border-light"}>
+    //                     {
+    //                         Object.keys(section).map((item) => {
+    //                             const { title, value, readOnly, className } = section[item];
+    //                             return <div key={item}
+    //                                     className={(!associateForm) ?
+    //                                     ("form-group " + className): "form-group row align-items-center"}>
+    //                                 <label for={"input-" + item}
+    //                                     className={associateForm ? "col-sm-3 text-right": ""}>{title}</label>
+    //                                 <div className={associateForm ? "col-sm-9": ""}>
+    //                                     <input id={"input-" + item}
+    //                                         type="text"
+    //                                         class="form-control form-control-sm"
+    //                                         placeholder={ value }
+    //                                         onChange = { this.onDataChange.bind(this, item) }
+    //                                         readOnly = { readOnly } />
+    //                                 </div>
+    //                             </div>
+    //                         })
+    //                     }
+    //                 </div>
+    //             </Fragment>
+    //         );
+    //     });
+    // }
     renderForm(form) {
-        const { associateForm } = this.state;
-        return Object.keys(form).map((sections, index) => {
-            let section = form[sections];
-            return (
-                <Fragment>
-                    {isNaN(Number(sections)) &&
-                        <h6>{sections}</h6>}
-                    <div key={section}
-                        className={(!associateForm) ?
-                            "form-row mb-3": "mb-3 border-bottom border-light"}>
-                        {
-                            Object.keys(section).map((item) => {
-                                const { title, value, readOnly, className } = section[item];
-                                return <div key={item}
-                                        className={(!associateForm) ?
-                                        ("form-group " + className): "form-group row align-items-center"}>
-                                    <label for={"input-" + item}
-                                        className={associateForm ? "col-sm-3 text-right": ""}>{title}</label>
-                                    <div className={associateForm ? "col-sm-9": ""}>
-                                        <input id={"input-" + item}
-                                            type="text"
-                                            class="form-control form-control-sm"
-                                            placeholder={ value }
-                                            onChange = { this.onDataChange.bind(this, item) }
-                                            readOnly = { readOnly } />
-                                    </div>
-                                </div>
-                            })
-                        }
-                    </div>
-                </Fragment>
-            );
+        return Object.keys(form).map((item) => {
+            const { title, value, readOnly } = form[item];
+            return <div key = {item} className="form-group col-md-12">
+                <label for={"input-" + item}>{title}</label>
+                <input id={"input-" + item} type="text" class="form-control form-control-sm" placeholder={ value } onChange = { this.onDataChange.bind(this, item) } readOnly = { readOnly } />
+            </div>
         });
     }
 
@@ -246,8 +255,10 @@ class ContractForm extends Component {
             { (compilationResult && connected) &&
                 <Fragment>
                     <div class="row">
-                        <div className={(!associateForm) ? "col-sm-10" : "col-sm-12"}>
-                            { this.renderForm(form) }
+                        <div className={(associateForm) ? "col-md-6": "col-md-10"}>
+                            <div class="row">
+                                { this.renderForm(form) }
+                            </div>
                             { (!associateForm) &&
                                 <input type="button"
                                     className="btn btn-success"
@@ -255,11 +266,19 @@ class ContractForm extends Component {
                                     onClick={this.compileAndDeployCarContract}
                                     disabled={isDeployInProgress || commandDisabled} />}
                         </div>
+                        {associateForm &&
+                        <div className="col-md-6">
+                            <div class="row">
+                              { this.renderForm(associateForm) }
+                           </div>
+                        </div>}
                     </div>
                     {(!associateForm) &&
                         <Fragment>
                             { isDeployInProgress &&
-                                <img src = {loader} alt = "" />
+                                <div className="loader">
+                                    <img src = {loader} alt = ""/>
+                                </div>
                             }
                         </Fragment>
                     }
@@ -267,7 +286,9 @@ class ContractForm extends Component {
             }
 
             {(!(compilationResult && connected)) &&
-                <img src = {loader} alt = "" />
+                <div className="loader">
+                    <img src = {loader} alt = ""/>
+                </div>
             }
         </Fragment>
         );

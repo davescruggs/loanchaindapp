@@ -187,34 +187,55 @@ class LoanStatus extends Component {
                 moduleTitle: 'Loan status',
                 contractName: ':Loan',
                 processCommandText: 'Ok',
+                // form: {
+                //     "Reference IDs": {
+                //         loanAddress: {title: 'Loan Reference', value: loanAddress, readOnly: true},
+                //         loanProgramAddress: {title: 'Loan Program reference', value: loanProgramAddress, readOnly: true},
+                //         applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
+                //     },
+                //     "Status": {
+                //         loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
+                //         goodCredit: {title: 'Credit status' , value: goodCredit, readOnly: true},
+                //         loanReceived: {title: 'Loan received status' , value: loanReceived ? 'Received' : 'Not received', readOnly: true}
+                //     },
+                //     "Applicant Info": {
+                //         name: {title: 'Full Name' , value: name, readOnly: true},
+                //         Gender: {title: 'Gender', value: Gender, readOnly: true},
+                //         dob: {title: 'DOB', value: dob, readOnly: true},
+                //         zip: {title: 'Zip', value: zip, readOnly: true},
+                //         income: {title: 'Annual Income', value: income, readOnly: true}
+                //     },
+                //     "Loan Info": {
+                //         loanProgram: {title: 'Loan Program' , value: loanProgramName, readOnly: true},
+                //         loanType: {title: 'Loan type' , value: loanType, readOnly: true},
+                //         loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
+                //         loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
+                //         estimatedEMI: {title: 'Monthly payment' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
+                //         estimatedIntrestRate: {title: 'Interest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
+                //     }
+                // },
+                // associateForm: {}
                 form: {
-                    "Reference IDs": {
-                        loanAddress: {title: 'Loan Reference', value: loanAddress, readOnly: true},
-                        loanProgramAddress: {title: 'Loan Program reference', value: loanProgramAddress, readOnly: true},
-                        applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
-                    },
-                    "Status": {
-                        loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
-                        goodCredit: {title: 'Credit status' , value: goodCredit, readOnly: true},
-                        loanReceived: {title: 'Loan received status' , value: loanReceived ? 'Received' : 'Not received', readOnly: true}
-                    },
-                    "Applicant Info": {
-                        name: {title: 'Full Name' , value: name, readOnly: true},
-                        Gender: {title: 'Gender', value: Gender, readOnly: true},
-                        dob: {title: 'DOB', value: dob, readOnly: true},
-                        zip: {title: 'Zip', value: zip, readOnly: true},
-                        income: {title: 'Annual Income', value: income, readOnly: true}
-                    },
-                    "Loan Info": {
-                        loanProgram: {title: 'Loan Program' , value: loanProgramName, readOnly: true},
-                        loanType: {title: 'Loan type' , value: loanType, readOnly: true},
-                        loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
-                        loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
-                        estimatedEMI: {title: 'Monthly payment' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
-                        estimatedIntrestRate: {title: 'Interest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
-                    }
+                    loanAddress: {title: 'Loan Reference' , value: loanAddress, readOnly: true},
+                    loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
+                    goodCredit: {title: 'Credit status' , value: goodCredit, readOnly: true},
+                    loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
+                    loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
+                    loanType: {title: 'Loan type' , value: loanType, readOnly: true},
+                    loanReceived: {title: 'Loan received status' , value: loanReceived ? 'Received' : 'Not received', readOnly: true},
+                    estimatedEMI: {title: 'EMI estimation' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
+                    estimatedIntrestRate: {title: 'Interest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI}
                 },
-                associateForm: {}
+                associateForm: {
+                    loanProgramAddress: {title: 'Loan Program reference' , value: loanProgramAddress, readOnly: true},
+                    loanProgram: {title: 'Loan Program' , value: loanProgramName, readOnly: true},
+                    applicantAddress: {title: 'Applicant Reference' , value: applicantAddress, readOnly: true},
+                    name: {title: 'Name' , value: name, readOnly: true},
+                    Gender: {title: 'Gender', value: Gender, readOnly: true},
+                    dob: {title: 'DOB', value: dob, readOnly: true},
+                    zip: {title: 'Zip', value: zip, readOnly: true},
+                    income: {title: 'Annual Income', value: income, readOnly: true}
+                }
             }
         return (
             <div class="card mb-2">

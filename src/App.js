@@ -41,11 +41,8 @@ class App extends Component {
                 </button>
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="navbar-nav mt-2 mx-lg-3 my-lg-0 font-weight-light">
-                        <li class="nav-item">
-                            <a href="/" class="nav-link p-2 p-lg-3">Loan Application</a>
-                        </li>
                         <li class="nav-item active">
-                            <a href="/manageloan" class="nav-link p-2 p-lg-3">Manage Loans</a>
+                            <a href="/" class="nav-link p-2 p-lg-3">Loan Application</a>
                         </li>
                     </ul>
                 </div>
