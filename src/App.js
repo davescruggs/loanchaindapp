@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import background from './modules/img/background.png';
+import logo from './modules/img/logo.png';
 import './App.css';
 import { web3Connection } from './web3';
 import NewApplicant from './pages/new-applicant';
@@ -34,7 +35,7 @@ class App extends Component {
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2 py-lg-0" role="navigation">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">
-                    <img src="img/logo.png" alt="" class="float-left" />Loan Management private blockchain
+                    <img src={logo} alt="" class="float-left mr-2" />Loan Management private blockchain
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
