@@ -5,12 +5,12 @@
   "keywords": ["node", "express", "blockchain","ethereum"],
   "env": {
     "BLOCKCHAIN_SERVICE_URL": {
-      "description": "A blockchain URL to deploy the contracts to.",
-      "value" :"http://alpha-blockchain.herokuapp.com/blockchain"
+      "description": "Use the Blockchain that you just deloyed through Add-on.",
+      "value" :""
     },
     "LONPROGRAM_CONTRACT_ID": {
-      "description": "The loan program (smart contract) supposedly deployed by bank.",
-      "value": "0xd643a7b26b8e97d1f345078abdf7c817bdf9b61a"
+      "description": "The loan program (smart contract) id you deployed through Add-On Admin.",
+      "value": ""
     }
   }
 }
