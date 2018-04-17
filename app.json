@@ -5,7 +5,7 @@
   "keywords": ["node", "express", "blockchain","ethereum"],
   "env": {
     "BLOCKCHAIN_SERVICE_URL": {
-      "description": "Use the Blockchain that you just deloyed through Add-on.",
+      "description": "Use the Blockchain that you just deployed through Add-on.",
       "value" :""
     },
     "LONPROGRAM_CONTRACT_ID": {
