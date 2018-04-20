@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 7000,
 
 
 app.locals.blockchainurl = process.env.BLOCKCHAIN_SERVICE_URL;
-app.locals.loanprogram = process.env.LONPROGRAM_CONTRACT_ID;
+app.locals.loanprogram = process.env.LOANPROGRAM_CONTRACT_ID;
 
 app.use(express.static(path.join(__dirname, 'build')))
 
