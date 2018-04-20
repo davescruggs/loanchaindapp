@@ -45,7 +45,8 @@ export let Solidity = {
     
                     const compilerVersion = soljsonReleases[_.keys(soljsonReleases)[0]];
     
-                    console.log('Browser-solc compiler version',compilerVersion);
+                    console.log('Browser-solc compiler version is hardcoded to be soljson-v0.4.21+commit.4cb486ee.js');
+                    compilerVersion = 'soljson-v0.4.21+commit.4cb486ee.js';
     
                     window.BrowserSolc.loadVersion(compilerVersion, (compiler) => {                    
     
