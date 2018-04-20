@@ -43,7 +43,7 @@ class App extends Component {
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="navbar-nav mt-2 mx-lg-3 my-lg-0 font-weight-light">
                         <li class="nav-item active">
-                            <a href="/" class="nav-link p-2 p-lg-3">Loan Application</a>
+                            <a href="/" class="nav-link p-2 p-lg-3">Home</a>
                         </li>
                     </ul>
                 </div>
