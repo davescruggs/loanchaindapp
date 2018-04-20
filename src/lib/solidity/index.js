@@ -7,13 +7,13 @@ export let Solidity = {
     compiledObjects: {},
 
     autoSetupCompiler: function(wait) {
-        
+
         return new Promise((resolve, reject) => {
 
             setTimeout(() => {
-                
+
                 return this.getCompiler().then((compiler, compilerVersion) => {
-                    
+
                     this.compiler = compiler;
 
                     console.log('Compiler setup successful!!!', compilerVersion);
@@ -28,7 +28,7 @@ export let Solidity = {
 
                 })
 
-            }, wait ? wait : 1000);   
+            }, wait ? wait : 1000);
 
         });
     },
@@ -40,33 +40,30 @@ export let Solidity = {
             try {
 
                 console.log('BrowserSolc Our log', window.BrowserSolc);
-                
+
                 window.BrowserSolc.getVersions((soljsonSources, soljsonReleases) => {
-    
-                    const compilerVersion = soljsonReleases[_.keys(soljsonReleases)[0]];
-    
-                    console.log('Browser-solc compiler version is hardcoded to be soljson-v0.4.21+commit.4cb486ee.js');
-                    compilerVersion = 'soljson-v0.4.21+commit.4cb486ee.js';
-    
-                    window.BrowserSolc.loadVersion(compilerVersion, (compiler) => {                    
-    
-                        console.log('Ready to create compile and deploy car contracts', compilerVersion);
-    
+
+                    const compilerVersion ="soljson-v0.4.22+commit.4cb486ee.js";
+
+                    window.BrowserSolc.loadVersion(compilerVersion, (compiler) => {
+
+                        console.log('Ready to create compile and deploy  contracts', compilerVersion);
+
                         resolve(compiler, compilerVersion);
-    
+
                     });
-                });                
+                });
 
             } catch (error) {
 
                 reject(error);
-            }            
+            }
 
-        });       
+        });
     },
 
     autoCompileContract: function(file, compilerOverride) {
-        
+
         const compiler = compilerOverride ? compilerOverride : this.compiler;
 
         if(compiler !== undefined) {
@@ -76,17 +73,17 @@ export let Solidity = {
         } else {
 
             return this.autoSetupCompiler().then(() => {
-                
+
                 return this.compileContract(file);
 
             });
         }
 
     },
-    
+
 
     compileContract: function(file, compilerOverride) {
-        
+
         return new Promise((resolve, reject) => {
 
             const compiledObject = this.compiledObjects[file];
@@ -97,30 +94,30 @@ export let Solidity = {
 
                     const optimize = 1,
                         compiler = compilerOverride ? compilerOverride : this.compiler;
-        
+
                     let compilationResult = compiler.compile(contract, optimize);
-    
+
                     if(compilationResult.errors && JSON.stringify(compilationResult.errors).match(/error/i)) {
-                        
+
                         console.log('Error occured in compilation', compilationResult.errors);
-    
+
                         console.log('Error message', JSON.stringify(compilationResult.errors));
-    
+
                         reject(compilationResult.errors);
-    
+
                     } else {
-    
+
                         console.log('Compilation successful!!!', compilationResult);
-    
+
                         this.compiledObjects[file] = compilationResult;
-                        
+
                         resolve(compilationResult);
                     }
-    
+
                 }).catch((error) => {
-                    
+
                     reject(error);
-    
+
                 });
 
             } else {
@@ -141,7 +138,7 @@ export let Solidity = {
             try {
 
                 const rawFile = new XMLHttpRequest();
-                
+
                 rawFile.open('GET', file, false);
 
                 rawFile.onreadystatechange = () => {
@@ -152,8 +149,8 @@ export let Solidity = {
 
                     }
                 }
-            
-                rawFile.send(null);                            
+
+                rawFile.send(null);
 
             } catch(error) {
 
