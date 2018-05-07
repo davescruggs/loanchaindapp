@@ -44,7 +44,7 @@ class NewLoanDetails extends Component {
 
             try {
                 BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
-
+                  console.log('loanProgram', loanProgram);
                     loanProgram.apply(applicant.address,
                         formData.loanType.value,
                         formData.loanAmount.value,

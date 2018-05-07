@@ -1,4 +1,4 @@
-pragma solidity ^0.4.22;
+pragma solidity 0.4.21;
 
 
 contract Applicant {
@@ -93,7 +93,7 @@ contract LoanProgram {
 
     function LoanProgram(string _name) public {
 
-        name = _name;
+        name = "Add-On Demo Loan Program";
     }
 
     function apply(address _applicant, string _loanType, int _loanAmount, int _loanPeriodInYears) public {
