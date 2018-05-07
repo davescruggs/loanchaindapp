@@ -43,7 +43,7 @@ export let Solidity = {
 
                 window.BrowserSolc.getVersions((soljsonSources, soljsonReleases) => {
 
-                    const compilerVersion ="soljson-v0.4.22+commit.4cb486ee.js";
+                    const compilerVersion ="soljson-v0.4.21+commit.dfe3193c.js";
 
                     window.BrowserSolc.loadVersion(compilerVersion, (compiler) => {
 
