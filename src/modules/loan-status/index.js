@@ -175,9 +175,9 @@ class LoanStatus extends Component {
     render() {
 
         console.log("goodCredit ", this.state.goodCredit);
-		if (this.state.goodCredit == true) {
+		if (this.state.goodCredit === true) {
             this.creditStatusValue = "Approved";
-        } else if (this.state.goodCredit == '') {
+        } else if (this.state.goodCredit === '') {
             this.creditStatusValue = "";
         } else {
             this.creditStatusValue = "Declined";
@@ -228,13 +228,13 @@ class LoanStatus extends Component {
                 form: {
                     loanAddress: {title: 'Loan Reference' , value: loanAddress, readOnly: true},
                     loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
-                    goodCredit: {title: 'Credit status' , value: this.creditStatusValue, readOnly: true},
+                    goodCredit: {title: 'Credit status' , value: goodCredit ? 'Approved' : 'Not Approved Yet', readOnly: true},
                     loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
                     loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
                     loanType: {title: 'Loan type' , value: loanType, readOnly: true},
                     loanReceived: {title: 'Loan received status' , value: loanReceived ? 'Received' : 'Not received', readOnly: true},
-                    estimatedEMI: {title: 'EMI estimation' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
-                    estimatedIntrestRate: {title: 'Interest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
+                    estimatedEMI: {title: 'Monthly payments' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
+                    estimatedIntrestRate: {title: 'Interest rate' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
                     //loanApprovedAmount: {title: 'Loan Approved Amount' , value: loanApprovedAmount},
                 },
                 associateForm: {

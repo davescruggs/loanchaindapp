@@ -41,7 +41,7 @@ class ManageLoanStatus extends Component {
     onUpdateCredit(creditStatus) {
 
         const { loanInfo } = this.state,
-            creditStatusMessage = creditStatus ? 'Good credit updated!!!' : 'Good credit declined';
+            creditStatusMessage = creditStatus ? 'Good credit approved!!!' : 'Good credit not approved yet';
 
         this.setState({ lockOperation: true, progress: 'Processing credit' })
 
@@ -120,7 +120,7 @@ console.log("NEW CULPRIT 3");
 
         const { loanInfo } = this.state;
 
-        this.setState({ lockOperation: true, progress: 'Processing emi and interest rate' })
+        this.setState({ lockOperation: true, progress: 'Processing monthly payments and interest rate' })
 
         this.setState({
             onSaveData: ((state) => {
@@ -141,7 +141,7 @@ console.log("NEW CULPRIT 5");
                                 if(error) {
                                     reject(error);
                                 } else {
-                                    this.resolveAddDisclosureMessage = 'Estimated Interest Rate and Estimated EMI saved successfully!!!';
+                                    this.resolveAddDisclosureMessage = 'Interest rate and Monthly payment saved successfully!!!';
                                 }
                             }
                         );
@@ -220,8 +220,8 @@ console.log("NEW CULPRIT 5");
                 <div className="alert alert-success alert-dismissable fade show"
                     role="alert">{ progress }</div>}
             <p className="d-flex">
-                {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success mr-2" value = "Edit Interest and EMI" disabled = { operationDisabled } />}
-                {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success mr-2" value = "Save Interest and EMI" disabled = { operationDisabled } />}
+                {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success mr-2" value = "Set Interest and Monthly payments" disabled = { operationDisabled } />}
+                {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success mr-2" value = "Save Interest and Monthly payments" disabled = { operationDisabled } />}
                 <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-success mr-2" value = "Approve Credit" disabled = { operationDisabled } />
                 <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-success mr-2" value = "Decline Credit" disabled = { operationDisabled } />
                 <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-success ml-auto" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />
