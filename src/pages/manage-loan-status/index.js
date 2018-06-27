@@ -41,16 +41,16 @@ class ManageLoanStatus extends Component {
     onUpdateCredit(creditStatus) {
 
         const { loanInfo } = this.state,
-            creditStatusMessage = creditStatus ? 'Good credit approved!!!' : 'Good credit not approved yet';
+            creditStatusMessage = creditStatus ? 'Credit approved!!!' : 'Credit Declined';
 
         this.setState({ lockOperation: true, progress: 'Processing credit' })
 
         return new Promise((resolve, reject) => {
 
             this.resolveUpdateCredit = resolve;
-            console.log("NEW CULPRIT 1");
+            //console.log("NEW CULPRIT 1");
             BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
-              console.log("NEW CULPRIT 2");
+              //console.log("NEW CULPRIT 2");
                 loanInfo.updateCreditStatus(creditStatus,
                     {from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas},
                     (error, contract) => {
@@ -83,9 +83,9 @@ class ManageLoanStatus extends Component {
         return new Promise((resolve, reject) => {
 
             this.resolveApproveLoan = resolve;
-console.log("NEW CULPRIT 3");
+//console.log("NEW CULPRIT 3");
             BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
-    console.log("NEW CULPRIT 4");
+    //console.log("NEW CULPRIT 4");
                 loanInfo.approveLoan({from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas},
                     (error, contract) => {
                         if(error) {
@@ -132,7 +132,7 @@ console.log("NEW CULPRIT 3");
                 return new Promise((resolve, reject) => {
 
                     this.resolveAddDisclosure = resolve;
-console.log("NEW CULPRIT 5");
+//console.log("NEW CULPRIT 5");
                     BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
             console.log("NEW CULPRIT 6");
                         loanInfo.addDisclosure(estimatedIntrestRate, estimatedEMI,
