@@ -1,0 +1,20 @@
+    [
+        {
+            "username":"Pradeep",
+            "password":"123",
+            "usertype":"user",
+            "url" : "/newapplicant"
+        },
+        {
+            "username":"Nirmal",
+            "password":"456",
+            "usertype":"bank",
+            "url" : "/banklist"
+        },
+        {
+            "username":"Vasanth",
+            "password":"789",
+            "usertype":"broker",
+            "url" : "/brokerlist"
+        }
+    ]

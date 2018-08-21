@@ -19,7 +19,6 @@ class LoanStatus extends Component {
             loanApproved: '',
             estimatedEMI: '',
             estimatedIntrestRate: '',
-            loanApprovedAmount: '',
             goodCredit: '',
             loanAmount: '',
             loanPeriodInYears: '',
@@ -173,15 +172,6 @@ class LoanStatus extends Component {
     }
 
     render() {
-
-        console.log("goodCredit ", this.state.goodCredit);
-		if (this.state.goodCredit === true) {
-            this.creditStatusValue = "Approved";
-        } else if (this.state.goodCredit === '') {
-            this.creditStatusValue = "";
-        } else {
-            this.creditStatusValue = "Declined";
-        }
         const {
                 loanAddress, invalidLoanInformation,
                 applicantAddress, loanApproved,
@@ -228,14 +218,13 @@ class LoanStatus extends Component {
                 form: {
                     loanAddress: {title: 'Loan Reference' , value: loanAddress, readOnly: true},
                     loanApproved: {title: 'Approval status' , value: loanApproved ? 'Approved' : 'In process', readOnly: true},
-                    goodCredit: {title: 'Credit status' , value: goodCredit ? 'Approved' : 'Not Approved Yet', readOnly: true},
+                    goodCredit: {title: 'Credit status' , value: goodCredit ? 'Approved' : 'Decline', readOnly: true},
                     loanAmount: {title: 'Loan Amount' , value: loanAmount, readOnly: true},
                     loanPeriodInYears: {title: 'Repayment period' , value: loanPeriodInYears, readOnly: true},
                     loanType: {title: 'Loan type' , value: loanType, readOnly: true},
                     loanReceived: {title: 'Loan received status' , value: loanReceived ? 'Received' : 'Not received', readOnly: true},
-                    estimatedEMI: {title: 'Monthly payments' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
-                    estimatedIntrestRate: {title: 'Interest rate' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI},
-                    //loanApprovedAmount: {title: 'Loan Approved Amount' , value: loanApprovedAmount},
+                    estimatedEMI: {title: 'EMI estimation' , value: estimatedEMI, readOnly: !editIntrestAndEMI},
+                    estimatedIntrestRate: {title: 'Interest rate estimation' , value: estimatedIntrestRate, readOnly: !editIntrestAndEMI}
                 },
                 associateForm: {
                     loanProgramAddress: {title: 'Loan Program reference' , value: loanProgramAddress, readOnly: true},

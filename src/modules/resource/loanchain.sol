@@ -18,6 +18,7 @@ contract Applicant {
         bool active;
         uint appliedDate;
     }
+    
 
     string private applicantName;
     string private applicantSex;
@@ -30,6 +31,9 @@ contract Applicant {
     event ApplicationAcknowledged(address from);
     event PersonalInfoRead(address from);
     address[] public myApplications;
+    string private loanType;
+    int private loanAmount;
+    int private periodInYears;
 
     modifier lenderCallOnly() {
         if (!applicationDetails[msg.sender].active) {
@@ -49,7 +53,10 @@ contract Applicant {
                         string _state,
                         string _country,
                         int _ssn,
-                        int _applicantIncome) public {
+                        int _applicantIncome,
+                        string _loanType,
+                        int _loanAmount,
+                        int _periodInYears) public {
 
         applicantName = _applicantName;
         applicantSex = _applicantSex;
@@ -57,6 +64,9 @@ contract Applicant {
         homeAdd = ApplicantAddress(_street1, _street2, _city, _zip, _state, _country);
         ssn = _ssn;
         applicantIncome = _applicantIncome;
+        loanType = _loanType;
+        loanAmount = _loanAmount;
+        periodInYears = _periodInYears;
         signedBy = msg.sender;
     }
 
@@ -74,14 +84,19 @@ contract Applicant {
         myApplications.push(msg.sender);
     }
 
-       //add modified lenderCallOnly to restrict access ONLY to lender
+    //add modified lenderCallOnly to restrict access ONLY to lender
     function getApplicantDetails() public view  returns(string, string, string, int, int, address) {
         return (applicantName, applicantSex, applicantDOB, ssn, applicantIncome, signedBy);
     }
 
-       //add modified lenderCallOnly to restrict access ONLY to lender
+    //add modified lenderCallOnly to restrict access ONLY to lender
     function getApplicantAddress() public  view  returns(string, string, string, string, string, string) {
         return(homeAdd.street1, homeAdd.street2, homeAdd.city, homeAdd.zip, homeAdd.state, homeAdd.country);
+    }
+
+    //add applicant loan information 
+    function getLoanInfo() public  view  returns(string, int, int) {
+        return(loanType, loanAmount, periodInYears);
     }
 }
 
@@ -93,7 +108,7 @@ contract LoanProgram {
 
     function LoanProgram(string _name) public {
 
-        name = "Add-On Demo Loan Program";
+        name = _name;
     }
 
     function apply(address _applicant, string _loanType, int _loanAmount, int _loanPeriodInYears) public {
@@ -102,7 +117,6 @@ contract LoanProgram {
         ApplicationCreated(newContract);
     }
 }
-
 
 contract Loan {
 
@@ -116,12 +130,15 @@ contract Loan {
     event UpdatingCreditStatusFor(int ssn);
     event DisclosuresUpdated(int estimatedIntrestRate, int estimatedEMI);
     event LoanAmountTxfed(uint amount);
+    event userAccount(address signedBy);
+    event userBalance(uint amount);
     int private ssn;
     int private applicantIncome;
     address private signedBy;
     int public estimatedIntrestRate;
     int public estimatedEMI;
     int public loanPeriodInYears;
+    int public approvedLoanAmount;
 
     function Loan(string _name, address _applicantContract, string _type, int _amount, int _periodInYears) public {
         Applicant applicant =  Applicant(_applicantContract);
@@ -132,6 +149,7 @@ contract Loan {
         loanAmount = _amount;
         received = true;
         loanPeriodInYears = _periodInYears;
+        emit userAccount(signedBy);
     }
 
     function updateCreditStatus(bool _creditStatus) public {
@@ -146,11 +164,16 @@ contract Loan {
 
     }
 
-    function approveLoan() public payable {
+    function approveLoan(int _approvedLoanAmount) public payable returns (bool success)  {
         if (goodCredit) {
+            approvedLoanAmount = _approvedLoanAmount;
+            emit userBalance(signedBy.balance);
+            //emit LoanAmountTxfed(uint(approvedLoanAmount));
+            emit LoanAmountTxfed(msg.value);
             signedBy.transfer(msg.value);
             approved = true;
-            LoanAmountTxfed(msg.value);
+            emit userBalance(signedBy.balance);
+            return true;
         } else {
             revert();
         }

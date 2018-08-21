@@ -1,7 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { Redirect } from 'react-router';
+import DatePicker from 'react-datepicker';
 import ContractForm from '../../modules/contract-form';
 import ContractFile from '../../modules/resource/loanchain.sol';
+
 
 class NewApplicant extends Component {
 
@@ -48,15 +50,58 @@ class NewApplicant extends Component {
             //     }
             // }
             form: {
-                name: {title: 'Name' , value: 'name'},
-                Gender: {title: 'Gender', value: 'Gender'},
-                dob: {title: 'DOB', value: 'dob'},
-                street1: {title: 'Street 1', value: 'street1'},
-                street2: {title: 'Street 2', value: 'street2'},
-                city: {title: 'City', value: 'city'},
-                zip: {title: 'Zip', value: 'zip'},
-                state: {title: 'State', value: 'state'},
-                country: {title: 'Country', value: 'country' },
+                name: {title: 'Name' , value: 'name', validate: (value) => { 
+                    if (!value.match(/^[a-zA-Z]+$/)) {
+                      return true;
+                    } 
+                    return false;
+                }, isError: false,
+                 error: "Username is invalid"},
+
+                Gender: {title: 'Gender', value:['Male', 'Female']},
+                dob: {title: 'DOB', value: '',  inputType:'date'},
+                street1: {title: 'Street 1', value: 'street1',  validate: (value) => { 
+                    if (!value.match(/^[a-zA-Z]+$/)) {
+                      return true;
+                    } 
+                    return false;
+                }, isError: false,
+                error: "Enter valid street name"},
+                street2: {title: 'Street 2', value: 'street2',  validate: (value) => { 
+                    if (!value.match(/^[a-zA-Z]+$/)) {
+                      return true;
+                    } 
+                    return false;
+                }, isError: false,
+                error: "Enter valid street name" },
+                city: {title: 'City', value: 'city', validate: (value) => { 
+                    if (!value.match(/^[a-zA-Z]+$/)) {
+                      return true;
+                    } 
+                    return false;
+                }, isError: false,
+                error: "City is not valid"},
+                zip: {title: 'Zip', value: 'zip', validate: (value) => { 
+                    if (!value.match(/^[0-9]*$/)) {
+                      return true;
+                    } 
+                    return false;
+                }, isError: false,
+                error: "Zipcode is not valid"},
+                state: {title: 'State', value: 'state', validate: (value) => { 
+                    if (!value.match(/^[a-zA-Z]+$/)) {
+                      return true;
+                    } 
+                    return false;
+                }, isError: false,
+                error: "State is not valid"},
+                country: {title: 'Country', value: 'country', validate: (value) => { 
+                    if (!value.match(/^[a-zA-Z]+$/)) {
+                      return true;
+                    } 
+                    return false;
+                }, isError: false,
+                error: "Country is not valid"},
                 ssn: {title: 'Social Security', value: '1234', validate: (value) => {return parseInt(value, 10) || 0} },
                 income: {title: 'Annual Income', value: '123456789101112', validate: (value) => {return parseInt(value, 10) || 0} }
             }

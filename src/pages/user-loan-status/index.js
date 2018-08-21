@@ -15,7 +15,7 @@ class UserLoanStatus extends Component {
     render() {
         return (
         <Fragment>
-            <a href={'/manageloan?loan=' + this.loanAddress} class="btn btn-success">Show Loan Admin View</a>
+            <a href={'/manageloan?loan=' + this.loanAddress} class="btn btn-success">Manage Loan</a>
             <LoanStatus loanAddress = {this.loanAddress} />
         </Fragment>);
     }

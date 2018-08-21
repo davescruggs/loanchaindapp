@@ -1,68 +1,204 @@
 import React, { Component, Fragment } from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import background from './modules/img/background.png';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+//import background from './modules/img/background.png';
+import background from './modules/img/login_bg.jpg';
 import logo from './modules/img/logo.png';
+import userAvatar from './modules/img/avatar.jpg';
 import './App.css';
 import { web3Connection } from './web3';
-import NewApplicant from './pages/new-applicant';
-import NewLoanDetails from './pages/new-loan-apply';
+import NewApplicant from './pages/applicant/create';
+import NewLoanDetails from './pages/applicant/create-loan';
+import ApplicantList from './pages/applicant/list';
 import UserLoanStatus from './pages/user-loan-status';
 import ManageLoanStatus from './pages/manage-loan-status';
+import Auth from './pages/auth/auth';
+import ApplicantLoanView from './pages/applicant/view';
+import BrokerApplicantList from './pages/broker/list';
+import BrokerLoanView from './pages/broker/view';
+import BankApplicantList from './pages/bank/list';
+import BankLoanView from './pages/bank/view';
+import Manage from './pages/bank/manage';
+import ContractCreate from './pages/bank/contractCreate';
+import Contract from './pages/bank/contract';
+import { BlockChain } from './lib/blockchain';
+import RestApproval from './pages/bank/restApproval';
+
+const checkAuth = () => {
+    const isLoggedIn = JSON.parse(localStorage.getItem('isLoggedIn'));
+    if (!isLoggedIn) {
+        return false;
+    }
+    return true;
+}
+const AuthRoute = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={props => (
+        checkAuth() ? (
+            <Component {...props}/>
+         ) : (
+             <Redirect to={{ pathname: '/login'}} />
+         )
+    )} />
+)
+console.log("checkAuth ", checkAuth());
+const PublicRoute = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={props => (
+        !checkAuth() ? (
+            <Redirect to={{ pathname: '/login'}} />
+         ) : (
+            <Redirect to={{ pathname: '/login'}} />
+         )
+    )} />
+)
 
 class App extends Component {
 
-  constructor(props) {
-      super(props);
-      this.state = {
-          connected: undefined
-      }
-  }
+    constructor(props) {
+        super(props);
+        this.accountname = '';
+        this.loggedUserInfo = JSON.parse(localStorage.getItem("accountInfo"));
+        console.log("loggedUserInfo", this.loggedUserInfo);
+        if(this.loggedUserInfo) {
+            this.accountname = this.loggedUserInfo.accountName;
+            this.accountId = this.loggedUserInfo.accountId;
+        }
+        this.state = {
+            connected: undefined,
+            loggedUser: this.accountname
+        }
+        
+        console.log("loggedUserInfo", props);
+    }
 
-  componentDidMount() {
-      web3Connection.watch((connected) => {
-          this.setState({ connected });
-      }).catch()
-  }
+    componentDidMount() {
+        web3Connection.watch((connected) => {
+            this.setState({ connected });
+        }).catch()
+    }
 
-  render() {
+    myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
 
-    const { connected } = this.state;
-    const styles = {
-        backgroundImage: "url(" + background + ")"
+    logout = (e) => {
+        e.preventDefault();
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('accountInfo');
+        window.location.assign('/');
+        <Redirect to={{ pathname: '/'}} /> 
     };
-    return (
-    <div className="main pb-3" style={ styles }>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2 py-lg-0" role="navigation">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img src={logo} alt="" class="float-left mr-2" />Loan Management private blockchain
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbar-collapse">
-                    <ul class="navbar-nav mt-2 mx-lg-3 my-lg-0 font-weight-light">
-                        <li class="nav-item active">
-                            <a href="/" class="nav-link p-2 p-lg-3">Home</a>
-                        </li>
-                    </ul>
+    
+    // Close the dropdown if the user clicks outside of it
+    /*window.onclick = function(e) {
+      if (!e.target.matches('.dropbtn')) {
+        var myDropdown = document.getElementById("myDropdown");
+          if (myDropdown.classList.contains('show')) {
+            myDropdown.classList.remove('show');
+          }
+      }
+    }*/
+
+    render() {
+
+        const { connected } = this.state;
+        const styles = {
+            backgroundImage: "url(" + background + ")"
+        },
+        { loggedUser } = this.state;
+        var redirectURL = '/';
+        if(loggedUser && loggedUser == 'broker') {
+            redirectURL = '/brokerlist';
+        } else if(loggedUser && loggedUser == 'bank') {
+            redirectURL = '/banklist';
+        } else if(loggedUser && loggedUser != 'broker' && loggedUser != 'bank') {
+            redirectURL = '/loans';
+        } else {
+            //localStorage.setItem('accountInfo', JSON.stringify(content));
+            redirectURL = '/login';
+        }
+        console.log("loggedUser ", loggedUser);
+        return (
+            <div className="main pb-3" style={styles}>
+                <nav className="navbar navbar-expand-lg navbar-dark bg-dark py-2 py-lg-0" role="navigation">
+                    <div className="container-fluid">
+                        <a className="navbar-brand" href="#">
+                            <img src={logo} alt="" className="float-left mr-2" />Loan Management private blockchain
+                        </a>
+                        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbar-collapse">
+                            <ul className="navbar-nav mt-2 mx-lg-3 my-lg-0 font-weight-light">
+                                {(loggedUser != 'broker' && loggedUser != 'bank' &&
+                                <li className="nav-item active">
+                                    <a href="/loans" className="nav-link p-2 p-lg-3">Loans</a>
+                                </li>
+                                )}
+                                {(loggedUser == 'broker' &&
+                                <li className="nav-item active">
+                                    <a href="/brokerlist" className="nav-link p-2 p-lg-3">Applicants</a>
+                                </li>
+                                )}
+                                {(loggedUser == 'bank' &&
+                                <li className="nav-item active">
+                                    <a href="/banklist" className="nav-link p-2 p-lg-3">Applicants</a>
+                                </li> 
+                                )}
+                                {(loggedUser == 'bank' &&
+                                <li className="nav-item active">
+                                    <a href="/contractlist" className="nav-link p-2 p-lg-3">Loan Programs</a>
+                                </li>
+                                )}
+                            </ul>
+                        </div>
+                        {(checkAuth() &&
+                        <div className="dropdown">
+                                <img src={userAvatar} className="user-image" alt="User Image" />
+                                <span className="user-login-name"> 
+                                { this.accountname } ( { BlockChain.getUserBalance(this.accountId)} ETH)
+                                </span>
+                                
+                                <span className="dropdown-content">
+                                    <a href="#" className="logout" onClick={this.logout}>
+                                    <i className="fa fa-sign-out"></i> 
+                                        <i className="fas fa-sign-out-alt"></i>Logout
+                                    </a>
+                                </span>
+                        </div>
+                        )}
+                    </div>
+                </nav>
+
+                <div className="mt-4">
+                    <BrowserRouter>
+                        <Switch>
+                            { (checkAuth) &&
+                                <Route exact path="/" render={() => (
+                                    (redirectURL && redirectURL != '/') ? (
+                                        <Redirect to={redirectURL}/>
+                                    ) : (
+                                        <Redirect to={redirectURL}/>
+                                    )
+                                )}/>
+                            }
+                            <Route exact path='/login' component={Auth} />
+                            <AuthRoute exact path='/loans' component={ApplicantList} render={props => <ApplicantList {...props}/>}/>
+                            <AuthRoute exact path='/loanview' component={ApplicantLoanView} />
+                            <AuthRoute exact path='/brokerlist' component={BrokerApplicantList} />
+                            <AuthRoute exact path='/brokerview' component={BrokerLoanView} />
+                            <AuthRoute exact path='/newapplicant' component={NewApplicant} />
+                            <AuthRoute exact path='/loan' component={NewLoanDetails} />
+                            <AuthRoute exact path='/loanstatus' component={UserLoanStatus} />
+                            <AuthRoute exact path='/manageloan' component={ManageLoanStatus} />
+                            <AuthRoute exact path='/banklist' component={BankApplicantList} render={props => <BankApplicantList {...props}/>}/>
+                            <AuthRoute exact path='/approveloan' component={Manage} />
+                            <AuthRoute exact path='/contractlist' component={Contract} />
+                            <AuthRoute exact path='/contractcreate' component={ContractCreate} />
+                            <AuthRoute exact path='/restapproval' component={RestApproval} />
+                        </Switch>
+                    </BrowserRouter>
                 </div>
             </div>
-        </nav>
-
-        <div className="container mt-4">
-            <BrowserRouter>
-                <Switch>
-                    <Route exact path = '/' component = { NewApplicant } />
-                    <Route exact path = '/loan' component = { NewLoanDetails } />
-                    <Route exact path = '/loanstatus' component = { UserLoanStatus } />
-                    <Route exact path = '/manageloan' component = { ManageLoanStatus } />
-                </Switch>
-            </BrowserRouter>
-        </div>
-    </div>
-    );
-  }
+        );
+    }
 }
-
 export default App;

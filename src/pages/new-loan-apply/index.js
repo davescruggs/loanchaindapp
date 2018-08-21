@@ -24,7 +24,8 @@ class NewLoanDetails extends Component {
             invalidApplicant: false,
             applicantAddress: this.applicantAddress,
             applicant: undefined,
-            redirectToLoanStatus: undefined
+            redirectToLoanStatus: undefined,
+            value: 'Personal'
         }
 
         this.compiledObject = undefined;
@@ -33,7 +34,12 @@ class NewLoanDetails extends Component {
         this.onCompilationComplete = this.onCompilationComplete.bind(this);
         this.onLoanProgramFound = this.onLoanProgramFound.bind(this);
         this.onSubmitLoanApplication = this.onSubmitLoanApplication.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
+
+    handleChange(event) {
+        this.setState({value: event.target.value});
+      }
 
     onSubmitLoanApplication(formData) {
         const { loanProgram, applicant } = this.state;
@@ -126,7 +132,7 @@ class NewLoanDetails extends Component {
                 form: {
                     applicantName: {title: 'Applicant Name', value: applicantName + ' [' + applicantAddress + ']', readOnly: true, className: 'col-sm-12'},
                     programName: {title: 'Program Name' , value: programName + ' [' + loanProgramAddress + ']', readOnly: true, className: 'col-sm-12'},
-                    loanType: {title: 'Type', value: '', readOnly, className: 'col-sm-6'},
+                    loanType: {title: 'Type', value: ['Personal', 'Education', 'Business'], readOnly, className: 'col-sm-6'},
                     loanAmount: {title: 'Amount', value: '', readOnly, validate: (value) => {return parseInt(value, 10) || 0}, className: 'col-sm-6'},
                     loanPeriod: {title: 'Period in years', readOnly, value: '', validate: (value) => {return parseInt(value, 10) || 0}, className: 'col-sm-6'}
                 }

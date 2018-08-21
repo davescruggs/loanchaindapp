@@ -41,16 +41,16 @@ class ManageLoanStatus extends Component {
     onUpdateCredit(creditStatus) {
 
         const { loanInfo } = this.state,
-            creditStatusMessage = creditStatus ? 'Credit approved!!!' : 'Credit Declined';
+            creditStatusMessage = creditStatus ? 'Good credit updated!!!' : 'Good credit declined';
 
         this.setState({ lockOperation: true, progress: 'Processing credit' })
 
         return new Promise((resolve, reject) => {
 
             this.resolveUpdateCredit = resolve;
-            //console.log("NEW CULPRIT 1");
+            console.log("NEW CULPRIT 1");
             BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
-              //console.log("NEW CULPRIT 2");
+              console.log("NEW CULPRIT 2");
                 loanInfo.updateCreditStatus(creditStatus,
                     {from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas},
                     (error, contract) => {
@@ -63,11 +63,12 @@ class ManageLoanStatus extends Component {
                 );
             });
         }).then((result) => {
-
+            console.log("Success Result", result);
+            console.log("creditStatus", creditStatus);
             this.setState({ creditStatus, lockOperation: false, updateInfo: {goodCredit: creditStatus}, progress: result })
 
         }).catch((error) => {
-
+            console.log("error", error);
             this.setState({ lockOperation: false, progress: 'Error occured in credit update processing ' + error.toString() })
 
         })
@@ -81,29 +82,42 @@ class ManageLoanStatus extends Component {
         this.setState({ lockOperation: true, progress: 'Processing loan approval' })
 
         return new Promise((resolve, reject) => {
-
             this.resolveApproveLoan = resolve;
-//console.log("NEW CULPRIT 3");
+            console.log("Loan approved resolveApproveLoan ", this.resolveApproveLoan);
+            console.log("Loan approved reject ", reject);
+console.log("NEW CULPRIT 3");
             BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
-    //console.log("NEW CULPRIT 4");
-                loanInfo.approveLoan({from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas},
-                    (error, contract) => {
-                        if(error) {
-                            reject(error);
-                        } else {
-                            this.resolveApproveLoanMessage = 'Loan approved successfully!!!';
+    console.log("NEW CULPRIT 4");
+    console.log("inflatedGas ", inflatedGas);
+    console.log("byteCode ", byteCode);
+    console.log("BlockChain.fromAccount() ", BlockChain.fromAccount());
+    console.log("BlockChain Loan Info ", loanInfo);
+                try {
+                    console.log("try block 1");
+                    loanInfo.approveLoan({from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas},
+                        (error, contract) => {
+                            if(error) {
+                                console.log("NEW error", error);
+                                reject(error);
+                            } else {
+                                console.log("Loan approved successfully ");
+                                this.resolveApproveLoanMessage = 'Loan approved successfully!!!';
+                            }
                         }
-                    }
-                );
-
+                    );
+                } catch(error) {
+                    console.log("error  BlockChain Loan Approve Info ", error);
+                }
+                setTimeout(resolve, 50000);
 
             });
         }).then((result) => {
-
+            
+            console.log("result  ", result);
             this.setState({ approved: true, lockOperation: false, updateInfo: { loanApproved: true }, progress: result })
 
         }).catch((error) => {
-
+            console.log("result error ", error);
             this.setState({ lockOperation: false, progress: 'Error occured in loan approval processing ' + error.toString() })
 
         })
@@ -120,7 +134,7 @@ class ManageLoanStatus extends Component {
 
         const { loanInfo } = this.state;
 
-        this.setState({ lockOperation: true, progress: 'Processing monthly payments and interest rate' })
+        this.setState({ lockOperation: true, progress: 'Processing emi and interest rate' })
 
         this.setState({
             onSaveData: ((state) => {
@@ -132,7 +146,7 @@ class ManageLoanStatus extends Component {
                 return new Promise((resolve, reject) => {
 
                     this.resolveAddDisclosure = resolve;
-//console.log("NEW CULPRIT 5");
+console.log("NEW CULPRIT 5");
                     BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
             console.log("NEW CULPRIT 6");
                         loanInfo.addDisclosure(estimatedIntrestRate, estimatedEMI,
@@ -141,7 +155,7 @@ class ManageLoanStatus extends Component {
                                 if(error) {
                                     reject(error);
                                 } else {
-                                    this.resolveAddDisclosureMessage = 'Interest rate and Monthly payment saved successfully!!!';
+                                    this.resolveAddDisclosureMessage = 'Estimated Interest Rate and Estimated EMI saved successfully!!!';
                                 }
                             }
                         );
@@ -220,8 +234,8 @@ class ManageLoanStatus extends Component {
                 <div className="alert alert-success alert-dismissable fade show"
                     role="alert">{ progress }</div>}
             <p className="d-flex">
-                {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success mr-2" value = "Set Interest and Monthly payments" disabled = { operationDisabled } />}
-                {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success mr-2" value = "Save Interest and Monthly payments" disabled = { operationDisabled } />}
+                {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success mr-2" value = "Edit Interest and EMI" disabled = { operationDisabled } />}
+                {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success mr-2" value = "Save Interest and EMI" disabled = { operationDisabled } />}
                 <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-success mr-2" value = "Approve Credit" disabled = { operationDisabled } />
                 <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-success mr-2" value = "Decline Credit" disabled = { operationDisabled } />
                 <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-success ml-auto" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />

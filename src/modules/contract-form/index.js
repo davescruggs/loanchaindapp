@@ -4,13 +4,16 @@ import BlockChain from '../../lib/blockchain';
 import Solidity from '../../lib/solidity';
 import { web3Connection } from '../../web3';
 import loader from '../img/tenor.gif';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css'
 
 class ContractForm extends Component {
 
     constructor(props) {
 
         super(props);
-
+        console.log("props", props);
         this.state = {
             compilationResult: undefined,
             statusMessage: undefined,
@@ -25,12 +28,17 @@ class ContractForm extends Component {
             processCommandText: props.processCommandText,
             form: props.form,
             associateForm: props.associateForm,
-            commandDisabled: props.commandDisabled
+            commandDisabled: props.commandDisabled,
+            fromAccountAddress: props.fromAccountAddress,
+            loanForm: props.loanForm,
+            contractDetails: props.contractDetails,
+            dob: moment()
         }
+        
 
         this.compileAndDeployCarContract = this.compileAndDeployCarContract.bind(this);
         this.onUpdateContract = this.onUpdateContract.bind(this);
-
+        this.handleChange = this.handleChange.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -40,6 +48,7 @@ class ContractForm extends Component {
             processCommandText: props.processCommandText,
             form: props.form,
             associateForm: props.associateForm,
+            loanForm: props.loanForm,
             commandDisabled: props.commandDisabled
         });
     }
@@ -124,12 +133,15 @@ class ContractForm extends Component {
     compileAndDeployCarContract() {
 
         if(this.props.onSubmit) {
-
+            if(this.props.contractName == 'Create Applicant') {
+                console.log("Welcome");
+                console.log("Welcome props",this.props);
+            }
             this.setState({
-                statusMessage: 'Compiling and deploying car contract',
+                statusMessage: 'Compiling and deploying contract',
                 isDeployInProgress: true
             });
-
+            console.log("Welcome props", this.state.form);
             this.props.onSubmit(this.state.form).then((response) => {
 
                 if(!response.redirect) {
@@ -147,22 +159,38 @@ class ContractForm extends Component {
             })
 
         } else {
-
+            const applicantDetails = {};
+            var keyToDelete = "header";
+            delete this.state.form.keyToDelete 
+            let applicantContractInput = [];
+            console.log("Welcome props compilationResult", this.state.form);
             const contractInput = Object.keys(this.state.form).map((item) => {
-                return this.state.form[item].value;
+                    applicantDetails['"'+this.state.form[item].title+'"'] = this.state.form[item].value;
+                    console.log("Welcome props compilationResult [item]", this.state.form[item].title );
+                    if(this.state.form[item].inputType != 'label' && this.state.form[item].title != 'Last name') {
+                        let name = '';
+                        if(this.state.form[item].title == 'First name') { 
+                            name = this.state.form['firstName'].value +' '+this.state.form['lastName'].value;
+                            console.log("name ", name);
+                            applicantContractInput.push(name);
+                        } else {
+                            applicantContractInput.push(this.state.form[item].value);
+                        }
+                        return this.state.form[item].value;
+                    }
             }),
             contractName = this.state.contractName,
             { compilationResult } = this.state;
-
+            let fromAccountAddress = this.state.fromAccountAddress
             this.setState({
-                statusMessage: 'Compiling and deploying car contract',
+                statusMessage: 'Compiling and deploying contract',
                 isDeployInProgress: true
             });
-
-
+            console.log("contractInput contractInput", contractInput);
+            console.log("contractInput applicantContractInput", applicantContractInput);
             BlockChain.getGasPriceAndEstimate(compilationResult, contractName).then(({gasPrice, gasEstimate}) => {
 
-                BlockChain.deployContract(contractInput, compilationResult, this.onUpdateContract, gasPrice, gasEstimate, contractName)
+                BlockChain.deployContract(applicantContractInput, compilationResult, this.onUpdateContract, gasPrice, gasEstimate, contractName, fromAccountAddress)
                 .catch((error) => {
                     this.setState({
                         statusMessage: 'deployment error: ' + error,
@@ -181,60 +209,103 @@ class ContractForm extends Component {
     }
 
     onDataChange(field, { target }) {
+        console.log('target ', target);
         const { value } = target,
         updateState = { ...this.state.form };
+        console.log('updateState ', updateState);
         console.log('onDataChange', field);
         updateState[field].value = updateState[field].validate ? updateState[field].validate(value) : value;
-
         this.setState( { form: updateState } );
 
         if(this.props.onDataChange) {
             this.props.onDataChange({ ...this.state });
         }
     }
-
-    // renderForm(form) {
-    //     const { associateForm } = this.state;
-    //     return Object.keys(form).map((sections, index) => {
-    //         let section = form[sections];
-    //         return (
-    //             <Fragment>
-    //                 {isNaN(Number(sections)) &&
-    //                     <h6>{sections}</h6>}
-    //                 <div key={section}
-    //                     className={(!associateForm) ?
-    //                         "form-row mb-3": "mb-3 border-bottom border-light"}>
-    //                     {
-    //                         Object.keys(section).map((item) => {
-    //                             const { title, value, readOnly, className } = section[item];
-    //                             return <div key={item}
-    //                                     className={(!associateForm) ?
-    //                                     ("form-group " + className): "form-group row align-items-center"}>
-    //                                 <label for={"input-" + item}
-    //                                     className={associateForm ? "col-sm-3 text-right": ""}>{title}</label>
-    //                                 <div className={associateForm ? "col-sm-9": ""}>
-    //                                     <input id={"input-" + item}
-    //                                         type="text"
-    //                                         class="form-control form-control-sm"
-    //                                         placeholder={ value }
-    //                                         onChange = { this.onDataChange.bind(this, item) }
-    //                                         readOnly = { readOnly } />
-    //                                 </div>
-    //                             </div>
-    //                         })
-    //                     }
-    //                 </div>
-    //             </Fragment>
-    //         );
-    //     });
-    // }
+    
+    handleChange(date) {
+        this.setState({
+            dob: date
+          });
+      }
     renderForm(form) {
+        console.log("formform ", form)
+        if( form != undefined)
         return Object.keys(form).map((item) => {
-            const { title, value, readOnly } = form[item];
-            return <div key = {item} className="form-group col-md-12">
-                <label for={"input-" + item}>{title}</label>
-                <input id={"input-" + item} type="text" class="form-control form-control-sm" placeholder={ value } onChange = { this.onDataChange.bind(this, item) } readOnly = { readOnly } />
-            </div>
+            const { title, value, readOnly, inputType, isError, error, styleclass, styleId, options } = form[item];
+            if (Array.isArray(value)) {
+                return <div key={item} className={"form-group col-md-4 "+ styleclass}>
+                 <label for={"select-" + item}>{title}</label>
+                  <select className="form-control form-control-sm" onChange = { this.onDataChange.bind(this, item) } value={this.state.value} name={item} >
+                    {
+                        value.map((v, i) => {
+                            return <option key={i} value={v}>{v}</option>;
+                        })
+                    }
+                   </select> 
+                </div>;
+            } else if(inputType == 'select') {
+                    console.log("Input Log", inputType);
+                    return <div key={item} className={"form-group col-md-4 "+ styleclass}>
+                        <label for={"select-" + item}>{title}</label>
+                            <select className="form-control form-control-sm" onChange = { this.onDataChange.bind(this, item) } value={this.state.value} name={item}>
+                            { (options) &&
+                                options.map((option) => {
+                                    return <option value={option} selected>{option}</option>
+                                })
+                            }
+                            </select>
+                    </div>
+            } else if(inputType == 'radio') {
+                console.log("Input options", options);
+                return <div key={item} className={"form-group col-md-4 "+ styleclass}>
+                    <label for={"select-" + item}>{title}</label>
+                        <div className="">
+                        { (options) &&
+                            options.map((option) => {
+                                return <label className="radio-inline" onChange = { this.onDataChange.bind(this, item) }>
+                                        <input type="radio" className="radio" value={option} name="gender" /> {option} 
+                                </label>
+                            })
+                        }
+                        </div>
+                </div>
+            } else if((inputType)=="date"){
+                return <div key={item} className="form-group col-md-4">
+                 <label for={"input-" + item}>{title}</label>
+                    <DatePicker className="form-control form-control-sm"  value= {this.state.dob} 
+                    dateFormat="DD-MMM-YYYY" 
+                    peekNextMonth
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    selected={this.state.dob}
+                    onChange={this.handleChange} onBlur={ this.onDataChange.bind(this, item) }/>
+                </div>
+            } else if((inputType)=="label") {
+                return <div className={"form-group col-md-12 "+ styleclass}>
+                            <h6 className="applicant-header">{title}</h6>
+                       </div>
+            } else if((inputType)=="password") {
+                return <div key = {item} className={"form-group col-md-4 "+ styleclass}>
+                    <label for={"input-" + item}>{title}</label>
+                    <input
+                    id={"input-" + item}
+                    type="password" className="form-control form-control-sm"
+                    placeholder={ value } onChange = { this.onDataChange.bind(this, item) } 
+                    readOnly = { readOnly } />
+                   {isError && <span>{error}</span>}
+                </div>
+            } else {
+                return <div key = {item} className={"form-group col-md-4 "+ styleclass}>
+                    <label for={"input-" + item}>{title}</label>
+                    <input
+                    id={"input-" + item}
+                    type="text" className="form-control form-control-sm"
+                    placeholder={ value } onChange = { this.onDataChange.bind(this, item) } 
+                    readOnly = { readOnly } />
+                   {isError && <span>{error}</span>}
+                </div>
+            }
         });
     }
 
@@ -247,28 +318,37 @@ class ContractForm extends Component {
             isDeployInProgress,
             form,
             associateForm,
-            commandDisabled
+            commandDisabled,
+            statusMessage,
+            loanForm
         } = this.state;
 
         return (
         <Fragment>
             { (compilationResult && connected) &&
                 <Fragment>
-                    <div class="row">
-                        <div className={(associateForm) ? "col-md-6": "col-md-10"}>
-                            <div class="row">
+                    <div className="row">
+                        <div className={(associateForm) ? "col-md-12": "col-md-12"}>
+                            <div className="row">
                                 { this.renderForm(form) }
                             </div>
-                            { (!associateForm) &&
+                            {loanForm &&
+                                <div className="row">
+                                    
+                                    { this.renderForm(loanForm) }
+                                </div>
+                            }
+                            { (!associateForm) &&  form != undefined &&
                                 <input type="button"
                                     className="btn btn-success"
                                     value={processCommandText}
                                     onClick={this.compileAndDeployCarContract}
                                     disabled={isDeployInProgress || commandDisabled} />}
                         </div>
+                        
                         {associateForm &&
-                        <div className="col-md-6">
-                            <div class="row">
+                        <div className="col-md-12">
+                            <div className="row">
                               { this.renderForm(associateForm) }
                            </div>
                         </div>}
@@ -282,6 +362,7 @@ class ContractForm extends Component {
                             }
                         </Fragment>
                     }
+                <span className="error-msg">{ statusMessage } </span>
                 </Fragment>
             }
 

@@ -1,9 +1,10 @@
 {
-  "main.css": "static/css/main.daffa215.css",
-  "main.css.map": "static/css/main.daffa215.css.map",
-  "main.js": "static/js/main.c45c41e9.js",
-  "main.js.map": "static/js/main.c45c41e9.js.map",
-  "static/media/background.png": "static/media/background.832aff3c.png",
-  "static/media/loanchain.sol": "static/media/loanchain.1e88629a.sol",
-  "static/media/tenor.gif": "static/media/tenor.e957f120.gif"
+  "main.css": "static/css/main.be5ab058.css",
+  "main.css.map": "static/css/main.be5ab058.css.map",
+  "main.js": "static/js/main.e64192ac.js",
+  "main.js.map": "static/js/main.e64192ac.js.map",
+  "static\\media\\background.png": "static/media/background.832aff3c.png",
+  "static\\media\\loanchain.sol": "static/media/loanchain.4c2510a9.sol",
+  "static\\media\\login_bg.jpg": "static/media/login_bg.c68e7b85.jpg",
+  "static\\media\\tenor.gif": "static/media/tenor.e957f120.gif"
 }

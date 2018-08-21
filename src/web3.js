@@ -16,10 +16,9 @@ const loanValue = axios.get('/loanProgramToUse').then((result) => {
     console.log('loanprogramContract', loanprogramContract);
 });
 
+console.log('blockChainConfiguredLocation After', blockChainConfiguredLocation);
 export const web3 = new Web3(new Web3.providers.HttpProvider(blockChainConfiguredLocation));
 export const web3Manager = Web3;
-
-
 
 export const web3Connection = {
 
@@ -53,3 +52,11 @@ export const web3Connection = {
     }
 
 }
+
+function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
