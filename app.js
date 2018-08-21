@@ -34,10 +34,8 @@ app.use(function (req, res, next) {
 });
 app.use(express.static(path.join(__dirname, 'build')))
 var baseURL = '';
-if (window.location.host.indexOf('localhost') == 0) {
-    baseURL = 'http://localhost:7000';
-}
-app.get(baseURL+'/urltouse', function(req, res) {
+
+app.get('/urltouse', function(req, res) {
    console.log("urltouse RETURNING::"+req.app.locals.blockchainurl);
     res.send(req.app.locals.blockchainurl);
 });
