@@ -45,6 +45,7 @@ class Manage extends Component {
         this.onEditIntrestAndEMI = this.onEditIntrestAndEMI.bind(this);
         this.onSaveIntrestAndEMI = this.onSaveIntrestAndEMI.bind(this);
         this.onDataChange = this.onDataChange.bind(this);
+        this.baseURL = '';
         if (window.location.host.indexOf('localhost') == 0) {
             this.baseURL = 'http://localhost:7000';
         }
