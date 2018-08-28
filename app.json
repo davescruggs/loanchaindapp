@@ -7,10 +7,6 @@
     "BLOCKCHAIN_SERVICE_URL": {
       "description": "Use the Heroku App URL that has the Blockchain Add-On deployed and add '/blockchain' to that(ie. http://your-appname-here.herokuapp.com/blockchain)",
       "value" :""
-    },
-    "LOANPROGRAM_CONTRACT_ID": {
-      "description": "The loan program (smart contract) id you deployed through Add-On Admin.refer to the Add-on documentation for more.",
-      "value": ""
     }
   }
 }
