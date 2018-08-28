@@ -261,7 +261,7 @@ console.log("NEW CULPRIT 5");
 
     async getApplicantDetails() {
 
-        await fetch(this.baseURL+'/applicants/'+ this.applicantAccountName).then(
+        await fetch('/applicants/'+ this.applicantAccountName).then(
             response => response.json() ).then(
             resulstData => this.setState(
                 { applicantDetails: resulstData }
@@ -273,7 +273,7 @@ console.log("NEW CULPRIT 5");
 
     updateApplicantInfo(loanAppInfo) {
         (async () => {
-            const rawResponse = await fetch(this.baseURL+'/create/', {
+            const rawResponse = await fetch('/create/', {
               method: 'POST',
               headers: {
                 'Accept': 'application/json',
