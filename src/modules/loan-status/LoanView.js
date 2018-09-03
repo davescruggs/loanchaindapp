@@ -197,7 +197,7 @@ class LoanView extends Component {
             }
             console.log("state values", parseInt(this.state.income));
         return (
-            <div className="card mb-2 col-md-8 loan-view">
+            <div className="card mb-2 col-md-8 loan-view mar-bot-50">
                 <div> 
                     <h5 className=" mb-0 py-2 ">{props.moduleTitle} - {this.state.name}</h5>
                     <hr />

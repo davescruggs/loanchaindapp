@@ -231,7 +231,7 @@ class NewApplicant extends Component {
         { redirectToLoanDetails, statusMessage } = this.state;
         return (
         
-        <div class="card mb-2 col-md-8 create-list-left">
+        <div class="card mb-2 col-md-8 create-list-left mar-bot-50">
         <div class="form-group">
             <div> 
                 <h5 class=" mb-0 py-2 font-weight-light">{props.moduleTitle}</h5>

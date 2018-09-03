@@ -55,12 +55,14 @@ class ContractForm extends Component {
 
     componentWillMount() {
 
+        var contractCompilationResult = localStorage.getItem("compilationResult");
+        if(!contractCompilationResult){
+
         Solidity.autoCompileContract(this.state.contractFile).then((compilationResult) => {
 
             console.log('compilationResult', compilationResult);
-
             this.setState({ compilationResult });
-
+            localStorage.setItem('compilationResult', JSON.stringify(compilationResult))
             this.onCompilationComplete(compilationResult);
 
         }).catch((error) => {
@@ -72,6 +74,12 @@ class ContractForm extends Component {
             });
 
         });
+    } else {
+        var compilationResult = JSON.parse(contractCompilationResult);
+        console.log('compilationResult Storage', compilationResult);
+        this.setState({ compilationResult });
+        this.onCompilationComplete(compilationResult);
+    }
 
         web3Connection.watch((connected) => {
             this.setState({ connected });

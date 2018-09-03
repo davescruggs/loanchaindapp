@@ -109,9 +109,9 @@ class Manage extends Component {
             console.log("NEW CULPRIT 4");
                 try {
                     console.log("try block 1");
-                    //let approvedEtherAmount = BlockChain.getEtherPrice(parseInt(approvedLoanAmount));
+                    let approvedEtherAmount = BlockChain.getEtherPrice(parseInt(approvedLoanAmount));
                     //console.log("approvedEtherAmount", approvedEtherAmount);
-                    loanInfo.approveLoan(approvedLoanAmount, {from: fromAccountAddress, data: byteCode, gas:inflatedGas, value: approvedLoanAmount},
+                    loanInfo.approveLoan(approvedEtherAmount, {from: fromAccountAddress, data: byteCode, gas:inflatedGas, value: approvedEtherAmount},
                         (error, contract) => {
                             if(error) {
                                 console.log("NEW error", error);
@@ -261,7 +261,7 @@ console.log("NEW CULPRIT 5");
 
     async getApplicantDetails() {
 
-        await fetch('/applicants/'+ this.applicantAccountName).then(
+        await fetch(this.baseURL+'/applicants/'+ this.applicantAccountName).then(
             response => response.json() ).then(
             resulstData => this.setState(
                 { applicantDetails: resulstData }
@@ -273,7 +273,7 @@ console.log("NEW CULPRIT 5");
 
     updateApplicantInfo(loanAppInfo) {
         (async () => {
-            const rawResponse = await fetch('/create/', {
+            const rawResponse = await fetch(this.baseURL+'/create/', {
               method: 'POST',
               headers: {
                 'Accept': 'application/json',
@@ -307,7 +307,7 @@ console.log("NEW CULPRIT 5");
                 onLoanStatusNotified = { this.onLoanStatusNotified }
                 editIntrestAndEMI = { editIntrestAndEMI }
                 onSaveData = { onSaveData } />
-            <div class="card mb-2 col-md-8 loan-view">
+            <div class="card mb-2 col-md-8 loan-view manage-loan mar-bot-50">
             {progress &&
                 <div className="alert alert-success alert-dismissable fade show"
                     role="alert">{ progress }</div>}

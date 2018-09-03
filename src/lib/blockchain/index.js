@@ -171,7 +171,7 @@ export const BlockChain = {
     },
 
     getEtherPrice: function(amount) {
-        return web3.fromWei(amount, "ether").toNumber();
+        return web3.toWei(amount, "ether");
     },
 
     deployContractFromABI: function(contractInput, result, onUpdateContract, gasPrice, gasEstimate, contractName, fromAccountAddress) {
