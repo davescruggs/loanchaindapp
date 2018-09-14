@@ -40,6 +40,8 @@ class Manage extends Component {
         this.applicantAccountName = params.account;
         this.approvalType = params.type;
         this.applicantName = params.applicantName;
+        this.organization = params.org;
+        console.log("organization", this.organization)
         
         this.onCompilationComplete = this.onCompilationComplete.bind(this);
         this.onLoanStatusNotified = this.onLoanStatusNotified.bind(this);
@@ -81,6 +83,19 @@ class Manage extends Component {
                         if(error) {
                             reject(error);
                         } else {
+                            if(this.organization != '') {
+                                const creditInfo = creditStatus ? "Approved" : "Rejected";
+                                BlockChain.getContract(this.compiledObject,':Applicant', loanInfo.applicantContractAddress()).then((applicant) => {
+                                    const applicantName = applicant.getApplicantDetails()[0];
+                                    const creditStatusInfo = {
+                                        "Applicant_Name__c": applicantName,
+                                        "loanReference__c": loanInfo.address,
+                                        "type__c": "C",
+                                        "status__c" : creditInfo
+                                    }
+                                    this.updatePlatformEvents(creditStatusInfo);
+                                });
+                            }
                             this.resolveUpdateCreditMessage = creditStatusMessage;
                         }
                     }
@@ -137,6 +152,20 @@ class Manage extends Component {
                                     this.updateApplicantInfo(loanAppInfo);
                                     console.log('applicantList loanAppInfo', loanAppInfo);
                                     console.log('applicantList applicantLists', applicantLists);
+                                }
+
+                                if(this.organization != ''){
+                                    
+                                    BlockChain.getContract(this.compiledObject,':Applicant', loanInfo.applicantContractAddress()).then((applicant) => {
+                                        const applicantName = applicant.getApplicantDetails()[0];
+                                        const monthlyPaymentInfo = {
+                                            "Applicant_Name__c": applicantName,
+                                            "loanReference__c": loanInfo.address,
+                                            "type__c": "LS",
+                                            "status__c" : "Approved"
+                                        }
+                                        this.updatePlatformEvents(monthlyPaymentInfo);
+                                    });
                                 }
                             }
                         }
@@ -207,6 +236,22 @@ console.log("NEW CULPRIT 5");
                                 if(error) {
                                     reject(error);
                                 } else {
+                                    
+                                    if(this.organization != ''){
+                                        
+                                        BlockChain.getContract(this.compiledObject,':Applicant', loanInfo.applicantContractAddress()).then((applicant) => {
+                                        const applicantName = applicant.getApplicantDetails()[0];
+                                        console.log("loanInfo applicantName", applicantName);
+                                        const monthlyPaymentInfo = {
+                                            "Applicant_Name__c": applicantName,
+                                            "loanReference__c": loanInfo.address,
+                                            "type__c": "I",
+                                            "loanInterest__c" : estimatedIntrestRate,
+                                            "loanMonthlyPay__c": estimatedEMI
+                                        }
+                                        this.updatePlatformEvents(monthlyPaymentInfo);
+                                        })
+                                    }
                                     this.resolveAddDisclosureMessage = 'Estimated Interest Rate and Estimated EMI saved successfully!!!';
                                 }
                             }
@@ -284,6 +329,22 @@ console.log("NEW CULPRIT 5");
               body: JSON.stringify(loanAppInfo)
             });
             const content = await rawResponse.json();
+            console.log("rawResponse", content);
+          })();
+    }
+
+    updatePlatformEvents(loanInfo) {
+        (async () => {
+            console.log("creditStatusInfo", loanInfo);
+            const loanResponse = await fetch(this.baseURL+'/update/events?org='+this.organization, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(loanInfo)
+            });
+            const content = await loanResponse.json();
             console.log("rawResponse", content);
           })();
     }

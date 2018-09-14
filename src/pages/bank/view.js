@@ -16,12 +16,13 @@ class BankLoanView extends Component {
         this.applicantAddress = params.applicant;
         this.accountName = params.accountName;
         this.bankView = true;
+        this.organization = params.org;
     }
 
     render() {
         return (
         <Fragment>
-            <LoanView loanAddress = {this.loanAddress} accountName = {this.accountName} applicantAddress = {this.applicantAddress}  bankView = { this.bankView }/>
+            <LoanView loanAddress = {this.loanAddress} org = {this.organization} accountName = {this.accountName} applicantAddress = {this.applicantAddress}  bankView = { this.bankView }/>
         </Fragment>);
     }
 }
