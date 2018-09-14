@@ -254,7 +254,7 @@ class ContractForm extends Component {
             } else if(inputType == 'select') {
                     console.log("Input Log", inputType);
                     return <div key={item} className={"form-group col-md-4 "+ styleclass}>
-                        <label for={"select-" + item}>{title}</label>
+                        <label for={"select-" + item} className="loan-label">{title}</label>
                             <select className="form-control form-control-sm" onChange = { this.onDataChange.bind(this, item) } value={this.state.value} name={item}>
                             { (options) &&
                                 options.map((option) => {
@@ -266,7 +266,7 @@ class ContractForm extends Component {
             } else if(inputType == 'radio') {
                 console.log("Input options", options);
                 return <div key={item} className={"form-group col-md-4 "+ styleclass}>
-                    <label for={"select-" + item}>{title}</label>
+                    <label for={"select-" + item} className="loan-label">{title}</label>
                         <div className="">
                         { (options) &&
                             options.map((option) => {
@@ -279,7 +279,7 @@ class ContractForm extends Component {
                 </div>
             } else if((inputType)=="date"){
                 return <div key={item} className="form-group col-md-4">
-                 <label for={"input-" + item}>{title}</label>
+                 <label for={"input-" + item} className="loan-label">{title}</label>
                     <DatePicker className="form-control form-control-sm"  value= {this.state.dob} 
                     dateFormat="DD-MMM-YYYY" 
                     peekNextMonth
@@ -290,12 +290,12 @@ class ContractForm extends Component {
                     onChange={this.handleChange} onBlur={ this.onDataChange.bind(this, item) }/>
                 </div>
             } else if((inputType)=="label") {
-                return <div className={"form-group col-md-12 "+ styleclass}>
-                            <h6 className="applicant-header">{title}</h6>
+                return <div className={"form-group col-md-12 no-padding "+ styleclass}>
+                            <h6 className="page-header">{title}</h6>
                        </div>
             } else if((inputType)=="password") {
                 return <div key = {item} className={"form-group col-md-4 "+ styleclass}>
-                    <label for={"input-" + item}>{title}</label>
+                    <label for={"input-" + item} className="loan-label">{title}</label>
                     <input
                     id={"input-" + item}
                     type="password" className="form-control form-control-sm"
@@ -305,7 +305,7 @@ class ContractForm extends Component {
                 </div>
             } else {
                 return <div key = {item} className={"form-group col-md-4 "+ styleclass}>
-                    <label for={"input-" + item}>{title}</label>
+                    <label for={"input-" + item} className="loan-label">{title}</label>
                     <input
                     id={"input-" + item}
                     type="text" className="form-control form-control-sm"
@@ -335,7 +335,7 @@ class ContractForm extends Component {
         <Fragment>
             { (compilationResult && connected) &&
                 <Fragment>
-                    <div className="row">
+                    <div>
                         <div className={(associateForm) ? "col-md-12": "col-md-12"}>
                             <div className="row">
                                 { this.renderForm(form) }

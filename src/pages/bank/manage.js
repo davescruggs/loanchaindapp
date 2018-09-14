@@ -3,6 +3,7 @@ import LoanStatus from '../../modules/loan-status';
 import BlockChain from '../../lib/blockchain';
 import LoanView from '../../modules/loan-status/LoanView';
 import { web3 } from '../../web3';
+import currencyImage from '../../modules/img/currency.png';
 import queryString from 'query-string';
 
 class Manage extends Component {
@@ -38,6 +39,7 @@ class Manage extends Component {
         this.loanAddress = params.loan;
         this.applicantAccountName = params.account;
         this.approvalType = params.type;
+        this.applicantName = params.applicantName;
         
         this.onCompilationComplete = this.onCompilationComplete.bind(this);
         this.onLoanStatusNotified = this.onLoanStatusNotified.bind(this);
@@ -296,57 +298,94 @@ console.log("NEW CULPRIT 5");
             onSaveData,
             lockOperation,
             approved,
-            creditStatus
+            creditStatus,
+            applicantDetails
         } = this.state,
         operationDisabled = loanInfo === undefined || lockOperation;
 
         return <div>
-            <LoanView updateInfo = { updateInfo }
-                onCompilationComplete = { this.onCompilationComplete }
-                loanAddress = {this.loanAddress}
-                onLoanStatusNotified = { this.onLoanStatusNotified }
-                editIntrestAndEMI = { editIntrestAndEMI }
-                onSaveData = { onSaveData } />
-            <div class="card mb-2 col-md-8 loan-view manage-loan mar-bot-50">
-            {progress &&
-                <div className="alert alert-success alert-dismissable fade show"
-                    role="alert">{ progress }</div>}
-                {( editIntrestAndEMI &&
-                    <div class="col-md-12">
-                        <div class="form-group row mar-top10 col-md-12">
-                                <label htmlFor="input-estimatedEMI" class="col-md-4">Monthly payments</label>
-                                <span class="col-md-6">
-                                    <input type="text" name="estimatedEMI" onChange={this.onDataChange} class="form-control col-md-6 form-control-sm" placeholder="0" />
-                                </span>
+            <div className="menu-bar col-md-12">
+                <div className="row">
+                        <div className="col-md-9">
+                            <div className="">
+                                    <span className="text-white"> Applications > {this.applicantName} </span>
+                            </div>
+                            <div className="col-md-6 pull-right">&nbsp;</div>
                         </div>
-                        <div class="form-group row col-md-12">
-                            <label htmlFor="input-estimatedIntrestRate" class="col-md-4">Interest rate</label>
-                            <span class="col-md-6">
-                                <input type="text" name="estimatedIntrestRate" onChange={this.onDataChange} class="form-control col-md-6 form-control-sm" placeholder="0" />
+                    <div className="col-md-3 pull-right">  
+                        <div className="pull-right text-white">
+                            <img src={currencyImage} className="" alt="" /> 
+                            &nbsp;  Balance : 
+                            ( { BlockChain.getUserBalance(this.accountId)} Tokens)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {progress &&
+                <div className="col-md-12 progress-alert row">
+                    <div className="col-md-2">&nbsp;</div>
+                    <div className="col-md-9 alert alert-success alert-dismissable fade show"
+                        role="alert">{ progress }</div>
+                </div>
+            }
+            <div className="col-md-12 row">
+            <div className="col-md-2">&nbsp;</div>
+            <div className="col-md-6 card">
+                <LoanView updateInfo = { updateInfo }
+                    onCompilationComplete = { this.onCompilationComplete }
+                    loanAddress = {this.loanAddress}
+                    onLoanStatusNotified = { this.onLoanStatusNotified }
+                    editIntrestAndEMI = { editIntrestAndEMI }
+                    onSaveData = { onSaveData } />
+            </div>
+            <div className="col-md-3">
+            <div className="card">
+                <div className="page-header">Status & Actions</div>
+                <div className="col-md-12 no-padding">
+                    <label className="col-md-5 loan-label">Credit status</label>
+                    <span className="col-md-6 loan-content-text">{creditStatus ? 'Approved' : 'Not Approved Yet'}</span>
+                </div>
+                <div className="col-md-12  no-padding">
+                    <label className="col-md-5 loan-label">Loan status</label>
+                    <span className="col-md-6 loan-content-text">{approved ? 'Approved' : 'Received'}</span>
+                </div>
+             
+                {( editIntrestAndEMI &&
+                    <div>
+                        <div className="col-md-12 row ">
+                            <label className="col-md-4 loan-label">Monthly payments</label>
+                            <div className="col-md-7 loan-content-text">
+                                <input type="text" name="estimatedEMI" onChange={this.onDataChange} className="form-control form-control-sm" placeholder="0" />
+                            </div>
+                        </div>
+                        <div className="col-md-12 row ">
+                            <label className="col-md-4 loan-label">Interest rate</label>
+                            <span className="col-md-7 loan-content-text">
+                                <input type="text" name="estimatedIntrestRate" onChange={this.onDataChange} className="form-control form-control-sm" placeholder="0" />
                             </span>
                         </div>
-                        
                     </div>
                 )}
                 { approved }
                 {( creditStatus && !approved &&
-                    <div class="col-md-12">
-                        <div class="form-group row mar-top10 col-md-12">
-                            <label htmlFor="input-approvedLoanAmount" class="col-md-4"> {approved} Approved loan amount</label>
-                            <span class="col-md-6">
-                                <input type="text" name="approvedLoanAmount" onChange={this.onDataChange} class="form-control col-md-6 form-control-sm" placeholder="0" />
-                            </span>
-                        </div>
+                    <div className="col-md-12 row">
+                        <label className="col-md-4 loan-label"> {approved} Approved loan amount</label>
+                        <span className="col-md-7 loan-content-text">
+                            <input type="text" name="approvedLoanAmount" onChange={this.onDataChange} className="form-control form-control-sm" placeholder="0" />
+                        </span>
                     </div>
                 )}
-                <p class="p-top text-center">
-                {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success col-md-3 btn-style" value = "Edit Interest and EMI" disabled = { operationDisabled } />}
-                {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success col-md-3 btn-style" value = "Save Interest and EMI" disabled = { operationDisabled } />}
-                <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-success col-md-2 btn-style" value = "Approve Credit" disabled = { operationDisabled } />
-                <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-success col-md-2 btn-style" value = "Decline Credit" disabled = { operationDisabled } />
-                <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-success col-md-3 btn-style" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />
-                </p>
+                <br />
+                <div className="text-center">
+                        {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success col-md-8 btn-style" value = "Edit Interest and EMI" disabled = { operationDisabled } />}
+                        {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success col-md-8 btn-style" value = "Save Interest and EMI" disabled = { operationDisabled } />}
+                        <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-success col-md-8 btn-style" value = "Approve Credit" disabled = { operationDisabled } />
+                        <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-success col-md-8 btn-style" value = "Decline Credit" disabled = { operationDisabled } />
+                        <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-success col-md-8 btn-style" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />
+                </div>
             </div>
+            </div>
+        </div>
         </div>
     }
 }

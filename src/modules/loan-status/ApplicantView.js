@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ContractForm from '../../modules/contract-form';
 import ContractFile from '../../modules/resource/loanchain.sol';
 import BlockChain from '../../lib/blockchain';
+import loader from '../img/tenor.gif';
 
 class ApplicantView extends Component {
 
@@ -159,6 +160,7 @@ class ApplicantView extends Component {
 
         const { compiledObject } = this,
         { applicantAddress } = this.state;
+        this.setState({ lockOperation: true, progress: 'Processing loan applying' })
         const contracts = document.getElementById("loan-program");
         const loanprogramContractId = contracts.options[contracts.selectedIndex].value;
         const loanProgramName = contracts.options[contracts.selectedIndex].text;
@@ -236,7 +238,7 @@ class ApplicantView extends Component {
                         this.updateApplicantInfo(loanAppInfo);
                         console.log('applicantList loanAppInfo', loanAppInfo);
                         console.log('applicantList applicantLists', applicantLists);
-                        this.setState({ redirectToLoanDetails: '/brokerlist' });
+                        this.setState({ redirectToLoanDetails: '/brokerlist?state=new' });
                     }
                     this.resolveSubmitLoan = true;                    
                     if(this.resolveSubmitLoan) {
@@ -313,7 +315,9 @@ class ApplicantView extends Component {
                 loanPeriodInYears, loanProgramAddress,
                 loanType, loanReceived,
                 name, Gender, dob, zip, income, loanProgramName,
-                editIntrestAndEMI, brokerView, approvedLoanAmount,contractDetails, redirectToLoanDetails
+                editIntrestAndEMI, brokerView, approvedLoanAmount,contractDetails, redirectToLoanDetails,
+                lockOperation,
+                progress
             } = this.state,
             props = {
                 contractFile : ContractFile,
@@ -330,11 +334,10 @@ class ApplicantView extends Component {
             console.log("state values", parseInt(this.state.income));
             console.log("contractDetails", this.state.contractDetails);
         return (
-            <div className="card mb-2 col-md-8 loan-view">
-                <div> 
-                    <h5 className=" mb-0 py-2 ">{props.moduleTitle} - {this.state.name}</h5>
-                    
-                </div>
+            <div className="loan-view">
+                {progress &&
+                <div className="alert alert-success alert-dismissable fade show"
+                    role="alert">{ progress }</div>}
                 <div className="">
                     {(!invalidLoanInformation) &&
                         <ContractForm { ...props }
@@ -348,50 +351,48 @@ class ApplicantView extends Component {
                         <Link to = '/'>Apply new loan</Link>
                     </p>}
                 </div>
-                <div className="box-body clearfix">
-                        <h6 className="page-header"><i className="fa fa-user"></i> Applicant Info </h6 >
-                </div>
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">Name</label>
-                            <span className="col-md-8">{name}</span>
+                <div className="page-header">General Infomartion</div>
+                     <div className="col-md-12">
+                            <label className="col-md-4 loan-label">Name</label>
+                            <span className="col-md-8 loan-content-text">{name}</span>
                     </div>
                     
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">Gender</label>
-                            <span className="col-md-8">{Gender}</span>
+                     <div className="col-md-12">
+                            <label className="col-md-4 loan-label">Gender</label>
+                            <span className="col-md-8 loan-content-text">{Gender}</span>
                     </div>
                     
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">DOB</label>
-                            <span className="col-md-8">{dob}</span>
+                     <div className="col-md-12">
+                            <label className="col-md-4 loan-label">DOB</label>
+                            <span className="col-md-8 loan-content-text">{dob}</span>
                     </div>
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">Annual Income</label>
-                            <span className="col-md-8">{ (income) ? parseInt(income, 10): ''}</span>
+                     <div className="col-md-12">
+                            <label className="col-md-4 loan-label">Annual Income</label>
+                            <span className="col-md-8 loan-content-text">{ (income) ? parseInt(income, 10): ''}</span>
                     </div>
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">Zip</label>
-                            <span className="col-md-8">{(zip) ? parseInt(zip, 10) : ''}</span>
+                     <div className="col-md-12">
+                            <label className="col-md-4 loan-label">Zip</label>
+                            <span className="col-md-8 loan-content-text">{(zip) ? parseInt(zip, 10) : ''}</span>
                     </div>
                     
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Applicant Reference</label>
-                                <span className="col-md-8">{applicantAddress}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Applicant Reference</label>
+                                <span className="col-md-8 loan-content-text">{applicantAddress}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan Amount</label>
-                                <span className="col-md-8">{(loanAmount) ? parseInt(loanAmount): ''}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan Amount</label>
+                                <span className="col-md-8 loan-content-text">{(loanAmount) ? parseInt(loanAmount): ''}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan type</label>
-                                <span className="col-md-8">{loanType}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan type</label>
+                                <span className="col-md-8 loan-content-text">{loanType}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Repayment period</label>
-                                <span className="col-md-8">{(loanPeriodInYears) ? parseInt(loanPeriodInYears): ''}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Repayment period</label>
+                                <span className="col-md-8 loan-content-text">{(loanPeriodInYears) ? parseInt(loanPeriodInYears): ''}</span>
                         </div>
                     
                     {loanAddress && 
@@ -399,50 +400,50 @@ class ApplicantView extends Component {
                         <div className="box-body clearfix">
                                 <h6 className="page-header"><i className="fa fa-money"></i> {props.LoanTitle} </h6 >
                         </div>
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan Reference</label>
-                                <span className="col-md-8">{loanAddress}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan Reference</label>
+                                <span className="col-md-8 loan-content-text">{loanAddress}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan Program reference</label>
-                                <span className="col-md-8">{loanProgramAddress}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan Program reference</label>
+                                <span className="col-md-8 loan-content-text">{loanProgramAddress}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan Program</label>
-                                <span className="col-md-8">{loanProgramName}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan Program</label>
+                                <span className="col-md-8 loan-content-text">{loanProgramName}</span>
                         </div>
                         
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Monthly payments</label>
-                                <span className="col-md-8">{ (estimatedEMI) ? parseInt(estimatedEMI) : ''}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Monthly payments</label>
+                                <span className="col-md-8 loan-content-text">{ (estimatedEMI) ? parseInt(estimatedEMI) : ''}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Interest rate</label>
-                                <span className="col-md-8">{(estimatedIntrestRate) ? parseInt(estimatedIntrestRate): ''}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Interest rate</label>
+                                <span className="col-md-8 loan-content-text">{(estimatedIntrestRate) ? parseInt(estimatedIntrestRate): ''}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Credit status</label>
-                                <span className="col-md-8">{goodCredit ? 'Approved' : 'Not Approved Yet'}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Credit status</label>
+                                <span className="col-md-8 loan-content-text">{goodCredit ? 'Approved' : 'Not Approved Yet'}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Approval status</label>
-                                <span className="col-md-8">{loanApproved ? 'Approved' : 'In process'}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Approval status</label>
+                                <span className="col-md-8 loan-content-text">{loanApproved ? 'Approved' : 'In process'}</span>
                         </div>
                         {( loanApproved &&
-                            <div className="col-md-12 form-group">
-                                    <label className="col-md-4">Approved Amount</label>
-                                    <span className="col-md-8">{ (approvedLoanAmount) ? parseInt(approvedLoanAmount): '' }</span>
+                             <div className="col-md-12">
+                                    <label className="col-md-4 loan-label">Approved Amount</label>
+                                    <span className="col-md-8 loan-content-text">{ (approvedLoanAmount) ? parseInt(approvedLoanAmount): '' }</span>
                             </div>
                         )}
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan received status</label>
-                                <span className="col-md-8">{loanReceived ? 'Received' : 'Not received'}</span>
+                         <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan received status</label>
+                                <span className="col-md-8 loan-content-text">{loanReceived ? 'Received' : 'Not received'}</span>
                         </div>
                     </div>
                     }
@@ -452,9 +453,9 @@ class ApplicantView extends Component {
                                         <h6 className="page-header"><i className="fa fa-bank"></i> {props.Loanstatus} </h6 >
                             </div>
                             <div className="row col-md-12">
-                                    <div className="col-md-12 form-group">
-                                        <label className="col-md-4">Loan Program:</label>
-                                        <span className="col-md-8">
+                                     <div className="col-md-12">
+                                        <label className="col-md-4 loan-label">Loan Program:</label>
+                                        <span className="col-md-8 loan-content-text">
                                                 <select className="form-control-sm" id="loan-program">{
                                                     contractDetails.map((contractDetail) => {
                                                         return <option value={contractDetail.contractid}>{contractDetail.name}</option>
@@ -463,12 +464,18 @@ class ApplicantView extends Component {
                                         </span>
                                     </div>
                             </div>
-                            
-                            <div className="col-md-12 form-group">
-                                <label className="col-md-4">&nbsp;</label>
-                                <span className="no-padding">
-                                    <input className="btn btn-sm btn-primary" type="submit" value="Apply" onClick={this.applyLoanProgram} />
-                                </span>
+                            {progress &&
+                                <div className="loader">
+                                    <img src = {loader} alt = ""/>
+                                </div>
+                            }
+                             <div className="row col-md-12">
+                                <div class="col-md-12">
+                                    <label className="col-md-4 loan-label">&nbsp;</label>
+                                    <span class="col-md-8 loan-content-text">
+                                        <input className="btn btn-sm btn-primary" type="submit" value="Apply" onClick={this.applyLoanProgram} />
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     }

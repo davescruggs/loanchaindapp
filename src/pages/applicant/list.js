@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import ContractForm from '../../modules/contract-form';
 import userList from '../../modules/resource/applicantlist.json';
 import Services from '../../lib/services';
+import BlockChain from '../../lib/blockchain';
+import queryString from 'query-string';
+import currencyImage from '../../modules/img/currency.png';
 
 class ApplicantList extends Component{
     
@@ -30,6 +33,12 @@ class ApplicantList extends Component{
         //this.getApplicantDetails = this.getApplicantDetails();
         //console.log("applicantDetails test", this.state.userList);
         this.getApplicantDetails();
+        this.loggedUserInfo = JSON.parse(localStorage.getItem("accountInfo"));
+        if(this.loggedUserInfo) {
+            this.accountId = this.loggedUserInfo.accountId;
+        }
+        let params = queryString.parse(this.props.location.search);
+        this.status = params.state;
     }
 
     /*async getApplicantDetails () {
@@ -65,22 +74,65 @@ render() {
     },
     { loanDetails } = this.state
     let applicantLists;
+    let newCount = 0, inprogressCount = 0, approvedCount = 0;
+    let applicantDetails = [];
+    const activeClassNew = this.status === "new" ? "active" : "";
+    const activeClassInprogress = this.status === "inprogress"  ? "active" : "";
+    const activeClassApproved = this.status === "approved"  ? "active" : "";
     if (loanDetails) {
         applicantLists = Object.values(loanDetails); //Converting an Object into an array
+        loanDetails.forEach(applicantInfo => {
+            if(applicantInfo.status == 'New') {
+                newCount = newCount + 1;
+            } else if(applicantInfo.status == 'Inprogress') {
+                inprogressCount = inprogressCount + 1; 
+            } else if(applicantInfo.status == 'Approved') {
+                approvedCount = approvedCount + 1; 
+            }
+            if(this.status == applicantInfo.status.toLowerCase()) {
+                applicantDetails.push(applicantInfo)
+            }
+        });
     }
-
     return (
-        <div className="card mb-2 col-md-10 list-left">
-        <div className="form-group">
-            <div> 
-                <h5 className=" mb-0 py-2 font-weight-light">{props.moduleTitle}
-                    <span className="pull-right">
-                        <a href="/newapplicant" className="btn btn-xs btn-primary" ><i className="fa fa-plus"></i> Create </a>
-                    </span>
-                </h5>
+        <div>
+            <div className="menu-bar col-md-12">
+                <div className="row">
+                        <div className="col-md-9">
+                            <div className="">
+                                    <span className="text-white"> Applications </span>
+                            </div>
+                            <div className="col-md-6 pull-right">
+                                <ul className="list-inline ">
+                                    <li className={"list-inline-item nav-menu-item " + activeClassNew}>
+                                        <a href="/loans?state=new" className="nav-menu-link"> New ({newCount})</a>
+                                    </li>
+                                    <li className={"list-inline-item nav-menu-item " + activeClassInprogress}>
+                                        <a href="/loans?state=inprogress" className="nav-menu-link">Inprogress ({inprogressCount})</a>
+                                    </li>
+                                    <li className={"list-inline-item nav-menu-item " + activeClassApproved}>
+                                        <a href="/loans?state=approved" className="nav-menu-link">Approved ({approvedCount})</a>
+                                    </li> 
+                                </ul>
+                            </div>
+                        </div>
+                    <div className="col-md-3 pull-right">  
+                        <div className="pull-right text-white">
+                            <img src={currencyImage} className="" alt="" /> 
+                            &nbsp;  Balance : 
+                            ( { BlockChain.getUserBalance(this.accountId)} Tokens)
+                        </div>
+                    </div>
+                </div>
             </div>
-            <table className="table table-bordered">
-                <thead>
+        <div className="mb-2 col-md-10 list-left">
+         <div> 
+                <span className="pull-right">
+                    <a href="/newapplicant" className="btn btn-xs btn-primary" ><i className="fa fa-plus"></i> APPLY </a>
+                </span>
+        </div>
+            <table className="table">
+                <thead className="thead-light">
                     <tr>
                         <th>Name</th>
                         <th>Amount</th>
@@ -90,10 +142,10 @@ render() {
                         <th>Status</th>
                     </tr>
                 </thead>
-                    { applicantLists ?
-                    <tbody>
+                    { applicantDetails.length > 0 ?
+                    <tbody className="tbody-light">
                         { 
-                            applicantLists.map(applicantList => {
+                            applicantDetails.map(applicantList => {
                             return (
                             <tr> 
                             <td>{applicantList.name}</td>
@@ -101,9 +153,9 @@ render() {
                             <td>
                                 {
                                     (applicantList.loanAddress && applicantList.loanAddress != "") ?
-                                        (<Link to={'/loanview?loan=' + applicantList.loanAddress}>{applicantList.loanAddress}</Link>)
+                                        (<Link to={'/loanview?loan=' + applicantList.loanAddress+'&applicantName='+applicantList.name}>{applicantList.loanAddress}</Link>)
                                         :
-                                        (<Link to={'/loanview?applicant=' + applicantList.applicantAddress}>{applicantList.applicantAddress}</Link>)
+                                        (<Link to={'/loanview?applicant=' + applicantList.applicantAddress+'&applicantName='+applicantList.name}>{applicantList.applicantAddress}</Link>)
                                 }
                             </td>
                             <td>{applicantList.loanType}</td>
@@ -114,10 +166,10 @@ render() {
                         })
                         }
                     </tbody> :
-                    <tbody>
-                    <tr>
-                        <td colSpan="10" className="text-center">No Records..</td>
-                    </tr>
+                    <tbody className="tbody-light">
+                        <tr>
+                            <td colSpan="10" className="text-center">No Records..</td>
+                        </tr>
                     </tbody>
                     }
         </table>

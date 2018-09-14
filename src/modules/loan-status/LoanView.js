@@ -197,11 +197,8 @@ class LoanView extends Component {
             }
             console.log("state values", parseInt(this.state.income));
         return (
-            <div className="card mb-2 col-md-8 loan-view mar-bot-50">
-                <div> 
-                    <h5 className=" mb-0 py-2 ">{props.moduleTitle} - {this.state.name}</h5>
-                    <hr />
-                </div>
+            <div className="">
+                    <div className="page-header">General Infomartion</div>
                     <div className="">
                         {(!invalidLoanInformation) &&
                             <ContractForm { ...props }
@@ -214,102 +211,92 @@ class LoanView extends Component {
                             <Link to = '/'>Apply new loan</Link>
                         </p>}
                     </div>
-                <div className="box-body clearfix">
-                        <h6 className="page-header"><i className="fa fa-user"></i> General </h6 >
-                </div>
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">Name</label>
-                            <span className="col-md-8">{name}</span>
+                    <div className="col-md-12">
+                            <label className="col-md-4 loan-label">Name</label>
+                            <span className="col-md-8 loan-content-text">{name}</span>
                     </div>
                     
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">Gender</label>
-                            <span className="col-md-8">{Gender}</span>
+                    <div className="col-md-12">
+                            <label className="col-md-4 loan-label">Gender</label>
+                            <span className="col-md-8 loan-content-text">{Gender}</span>
                     </div>
                     
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">DOB</label>
-                            <span className="col-md-8">{dob}</span>
+                    <div className="col-md-12">
+                            <label className="col-md-4 loan-label">DOB</label>
+                            <span className="col-md-8 loan-content-text">{dob}</span>
                     </div>
                     
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">Annual Income</label>
-                            <span className="col-md-8">{ (income) ? parseInt(income, 10): ''}</span>
+                    <div className="col-md-12">
+                            <label className="col-md-4 loan-label">Annual Income</label>
+                            <span className="col-md-8 loan-content-text">{ (income) ? parseInt(income, 10): ''}</span>
                     </div>
                     
-                    <div className="col-md-12 form-group">
-                            <label className="col-md-4">Zip</label>
-                            <span className="col-md-8">{ (zip) ? parseInt(zip) : ''}</span>
+                    <div className="col-md-12">
+                            <label className="col-md-4 loan-label">Zip</label>
+                            <span className="col-md-8 loan-content-text">{ (zip) ? parseInt(zip) : ''}</span>
                     </div>
-                    
-                    <div className="box-body clearfix">
-                            <h6 className="page-header"><i className="fa fa-money"></i> {props.LoanTitle} </h6 >
-                    </div>
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan Reference</label>
-                                <span className="col-md-8">{loanAddress}</span>
+                    <div className="page-header">Loan Infomartion</div>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan Reference</label>
+                                <span className="col-md-8 loan-content-text">{loanAddress}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan Program reference</label>
-                                <span className="col-md-8">{loanProgramAddress}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan Program reference</label>
+                                <span className="col-md-8 loan-content-text">{loanProgramAddress}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan Program</label>
-                                <span className="col-md-8">{loanProgramName}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan Program</label>
+                                <span className="col-md-8 loan-content-text">{loanProgramName}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Applicant Reference</label>
-                                <span className="col-md-8">{applicantAddress}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Applicant Reference</label>
+                                <span className="col-md-8 loan-content-text">{applicantAddress}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan Amount</label>
-                                <span className="col-md-8">{ (loanAmount) ? parseInt(loanAmount) : ''}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan Amount</label>
+                                <span className="col-md-8 loan-content-text">{ (loanAmount) ? parseInt(loanAmount) : ''}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan type</label>
-                                <span className="col-md-8">{loanType}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan type</label>
+                                <span className="col-md-8 loan-content-text">{loanType}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Repayment period</label>
-                                <span className="col-md-8">{ (loanPeriodInYears) ? parseInt(loanPeriodInYears): ''}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Repayment period</label>
+                                <span className="col-md-8 loan-content-text">{ (loanPeriodInYears) ? parseInt(loanPeriodInYears): ''}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Monthly payments</label>
-                                <span className="col-md-8">{ (estimatedEMI) ? parseInt(estimatedEMI) : ''}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Monthly payments</label>
+                                <span className="col-md-8 loan-content-text">{ (estimatedEMI) ? parseInt(estimatedEMI) : ''}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Interest rate</label>
-                                <span className="col-md-8">{ (estimatedIntrestRate) ? parseInt(estimatedIntrestRate) : ''}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Interest rate</label>
+                                <span className="col-md-8 loan-content-text">{ (estimatedIntrestRate) ? parseInt(estimatedIntrestRate) : ''}</span>
                         </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Credit status</label>
-                                <span className="col-md-8">{goodCredit ? 'Approved' : 'Not Approved Yet'}</span>
-                        </div>
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Approval status</label>
-                                <span className="col-md-8">{loanApproved ? 'Approved' : 'In process'}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Approval status</label>
+                                <span className="col-md-8 loan-content-text">{loanApproved ? 'Approved' : 'In process'}</span>
                         </div>
                         
                         {( loanApproved &&
-                            <div className="col-md-12 form-group">
-                                    <label className="col-md-4">Approved Amount</label>
-                                    <span className="col-md-8">{ (approvedLoanAmount) ? parseInt(approvedLoanAmount) : '' }</span>
+                            <div className="col-md-12">
+                                    <label className="col-md-4 loan-label">Approved Amount</label>
+                                    <span className="col-md-8 loan-content-text">{ (approvedLoanAmount) ? BlockChain.getEtherFromPrice(parseInt(approvedLoanAmount)) : '' }</span>
                             </div>
                         )}
                         
-                        <div className="col-md-12 form-group">
-                                <label className="col-md-4">Loan received status</label>
-                                <span className="col-md-8">{loanReceived ? 'Received' : 'Not received'}</span>
+                        <div className="col-md-12">
+                                <label className="col-md-4 loan-label">Loan received status</label>
+                                <span className="col-md-8 loan-content-text">{loanReceived ? 'Received' : 'Not received'}</span>
                         </div>
                     
                     {brokerView &&
@@ -318,9 +305,9 @@ class LoanView extends Component {
                                         <h6 className="page-header"><i className="fa fa-bank"></i> {props.Loanstatus} </h6 >
                             </div>
                             <div className="row col-md-12">
-                                    <div className="col-md-12 form-group">
-                                        <label className="col-md-4">Loan Program:</label>
-                                        <span className="col-md-8">
+                                    <div className="col-md-12">
+                                        <label className="col-md-4 loan-label">Loan Program:</label>
+                                        <span className="col-md-8 loan-content-text">
                                                 <select>
                                                     <option value="Personal">Personal</option>
                                                     <option value="Home">Home</option>
@@ -330,8 +317,8 @@ class LoanView extends Component {
                                     </div>
                             </div>
                             
-                            <div className="col-md-12 form-group">
-                                <label className="col-md-4">&nbsp;</label>
+                            <div className="col-md-12">
+                                <label className="col-md-4 loan-label">&nbsp;</label>
                                 <span className="no-padding">
                                     <input className="btn btn-sm btn-primary" type="submit" value="Apply" />
                                 </span>

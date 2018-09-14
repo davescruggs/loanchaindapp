@@ -37,11 +37,88 @@ h5, h6 {
 }
 
 .bg-dark {
-    background: #333 !important;
+    background: #ffffff !important;
+}
+
+.navbar {
+    height: 65px !important;
+}
+
+.menu-bar {
+    background: #182D52;
+    height: 55px;
+    padding: 18px;
+    font-size: 12px;
+}
+.loan-text {
+    color: #37474F;
+}
+.nav-link {
+    color: #1b222f;
+    font-weight: 500;
+}
+.nav-menu-item {
+    padding-right: 10px;
+}
+.nav-menu-item, .nav-menu-link{
+    color: #ffffff;
+    min-width: 50px;
+    margin-left: 10px;
+}
+.nav-menu-item, a:hover{
+    color: #0C7CC6;
+    text-decoration: none;
+    text-transform: none;
+}
+.list-inline li.active {
+    border: solid 1px #0890E3;
+    border-radius: 15px;
+    text-align: center;
+    color: #0890E3;
+}
+.list-inline {
+    margin-top: -15px;
+}
+li.active {
+    color: #1e2629;
+}
+.header-title {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 14px;
+    color: #37474F;
+}
+.page-header {
+    background-image: linear-gradient(#F7F8FA, #F3F3F3)!important;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 10px 10px 10px 25px;
+    color: #37474F;
+    border: solid 1px #eaeaea;
+}
+.navbar-brand {
+    border-left: 1px solid #b3b3b3;
+}
+
+.text-black {
+    color: #000000;
+}
+.text-white {
+    color: #FFFFFF;
 }
 
 .module-title {
     color: #3F729B;
+}
+
+.loan-label, .loan-content-text {
+    font-size: 12px;
+    margin: 10px 10px 5px 0px;;
+    font-weight: 400;
+    color: #3e3b3b;
+}
+.loan-content-text {
+    font-weight: 600;
 }
 
 label {
@@ -52,7 +129,6 @@ label {
 
 .btn {
     font-size: .875em;
-    text-transform: uppercase;
 }
 
 .btn:active, .btn:focus, .btn:hover {
@@ -165,10 +241,10 @@ label {
     outline: 0;
 }
 
-table, th, td {
+/* table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
-}
+} */
 th, td {
     padding: 15px;
     text-align: left;
@@ -179,15 +255,30 @@ table#t01 tr:nth-child(even) {
 table#t01 tr:nth-child(odd) {
    background-color: #fff;
 }
-table#t01 th {
-    background-color:#808080;
+table th {
+    background-color:#F4F5F6;
     color: white;
 }
+.table .thead-light th {
+    background-image: linear-gradient(#F7F8FA, #F3F3F3)!important;
+    font-weight: 600;
+    font-size: 12px;
+    border: none;
+}
+.table .tbody-light td {
+    background-color: #FFF;
+    font-size: 12px;
+    border: none;
+}
+
+
 
 /* card layout */
-
 .card {
     border: 0;
+    margin: 35px 0 50px 0;
+    padding: 0px !important;
+    min-height: 300px !important;
 }
 
 .card-header {
@@ -222,6 +313,9 @@ table#t01 th {
 .card-header.collapsed::after {
     transform: translateY(-50%) rotate(-135deg);
 }
+.no-padding {
+    padding: 0px !important;
+}
 
 .App {
     text-align: center;
@@ -249,7 +343,73 @@ table#t01 th {
 
 .list-left {
     left: 8%;
+    margin-top: 35px;
 }
+.status-btn {
+    padding: 0px 10px !important;
+}
+.dropdown-toggle a:hover {
+    text-transform: capitalize;
+}
+li > .dropdown-menu {
+    position: absolute;
+    right: 0;
+    left: auto;
+    border: 1px solid #dddddd;
+    box-shadow: 10px 2px 10px 0 rgba(0, 0, 0, 0.26);
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.dropdown-menu {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    padding: 0 10px;
+    border-top-width: 0;
+    min-width: auto !important;
+    border: 1px solid #dddddd;
+    box-shadow: 10px 2px 10px 0 rgba(0, 0, 0, 0.26);
+    /*width: 150px;*/
+}
+.dropdown-menu > li.user-header {
+    height: 50px;
+    padding: 10px;
+    text-align: center;
+}
+
+li.user-header {
+    background-color: #605ca8;
+    padding-right: 25px;
+}
+
+.dropdown-menu > li.user-header > p {
+    z-index: 5;
+    color: #fff;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 17px;
+    margin-top: 10px;
+}
+
+.dropdown-menu > .user-footer {
+    background-color: #f9f9f9;
+    padding: 10px 15px 10px 10px;
+}
+
+.user-footer .btn-default {
+    color: #666666;
+    border-color: #cac9c9;
+}
+
+.progress-alert div div div.card {
+    margin: 0px;
+}
+
+.btn:active {
+    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    -moz-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
 @keyframes App-logo-spin {
     from {
         transform: rotate(0deg);
@@ -278,6 +438,7 @@ table#t01 th {
 }
 .loan-view {
     left: 15%;
+    margin-bottom: 50px !important;
 }
 .create-list-left {
     left: 16%;
@@ -295,11 +456,12 @@ table#t01 th {
     margin-top: -2px;
 }
 .user-login-name  {
-    color: #FFF;
+    color: #000000;
     font-weight: 500;
     margin-right: 10px;
     text-transform: capitalize;
 }
+
 .divider {
     padding-bottom: 5px;
     border-bottom: solid 1px #d7d7d7;
@@ -349,7 +511,7 @@ input.radio {
 
 .main-footer {
     z-index: 840;
-    background-color: #333 !important;
+    background-color: #FFF !important;
     border-top: 0!important;
     padding: 10px;
     margin-top: 50px !important;

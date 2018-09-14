@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import ContractForm from '../../modules/contract-form';
 import ContractFile from '../../modules/resource/loanchain.sol';
 import { BlockChain } from '../../lib/blockchain';
+import currencyImage from '../../modules/img/currency.png';
 import moment from 'moment';
 
 class NewApplicant extends Component {
@@ -65,7 +66,7 @@ class NewApplicant extends Component {
             }
             const loanAppInfo = {[accountname] : finalObj};
             this.updateApplicantInfo(loanAppInfo);
-            this.setState({ redirectToLoanDetails: '/loans' });
+            this.setState({ redirectToLoanDetails: '/loans?state=new' });
         }).catch((error) => {
             console.log("Error ", error)
             this.setState({
@@ -165,64 +166,9 @@ class NewApplicant extends Component {
                     loaninfo: {title: 'Security & Loan Information: ', inputType: 'label', styleclass: 'mar-bot0'},
                     ssn: {title: 'Social Security', value: '1234', inputType: 'password', validate: (value) => {return parseInt(value, 10) || 0} },
                     income: {title: 'Annual Income', value: '123456789101112', validate: (value) => {return parseInt(value, 10) || 0} },
-                    loanType: {title: 'Loan type',  options: ['Personal Loan', 'Home Loan'], value: 'Personal Loan', inputType: 'select'},
+                    loanType: {title: 'Loan type',  options: ['Personal Loan', 'Education Loan', 'Auto Loan', 'Home Loan'], value: 'Personal Loan', inputType: 'select'},
                     loanAmount: {title: 'Amount', value: '550000', validate: (value) => {return parseInt(value, 10) || 0} },
                     loanPeriod: {title: 'Period in years', value: '10', validate: (value) => {return parseInt(value, 10) || 0} }
-                    /*loanPeriod: {title: 'Period in years', value: '', validate: (value) => {return parseInt(value, 10) || 0}, styleclass: 'col-md-4'}*/
-                /*name: {title: 'Name' , value: 'name', validate: (value) => { 
-                    if (!value.match(/^[a-zA-Z]+$/)) {
-                      return true;
-                    } 
-                    return false;
-                }, isError: false,
-                 error: "Username is invalid"},
-
-                Gender: {title: 'Gender', value:['Male', 'Female']},
-                dob: {title: 'DOB', value: '',  inputType:'date'},
-                street1: {title: 'Street 1', value: 'street1',  validate: (value) => { 
-                    if (!value.match(/^[a-zA-Z]+$/)) {
-                      return true;
-                    } 
-                    return false;
-                }, isError: false,
-                error: "Enter valid street name"},
-                street2: {title: 'Street 2', value: 'street2',  validate: (value) => { 
-                    if (!value.match(/^[a-zA-Z]+$/)) {
-                      return true;
-                    } 
-                    return false;
-                }, isError: false,
-                error: "Enter valid street name" },
-                city: {title: 'City', value: 'city', validate: (value) => { 
-                    if (!value.match(/^[a-zA-Z]+$/)) {
-                      return true;
-                    } 
-                    return false;
-                }, isError: false,
-                error: "City is not valid"},
-                zip: {title: 'Zip', value: 'zip', validate: (value) => { 
-                    if (!value.match(/^[0-9]*$/)) {
-                      return true;
-                    } 
-                    return false;
-                }, isError: false,
-                error: "Zipcode is not valid"},
-                state: {title: 'State', value: 'state', validate: (value) => { 
-                    if (!value.match(/^[a-zA-Z]+$/)) {
-                      return true;
-                    } 
-                    return false;
-                }, isError: false,
-                error: "State is not valid"},
-                country: {title: 'Country', value: 'country', validate: (value) => { 
-                    if (!value.match(/^[a-zA-Z]+$/)) {
-                      return true;
-                    } 
-                    return false;
-                }, isError: false,
-                error: "Country is not valid"},
-                ssn: {title: 'Social Security', value: '1234', validate: (value) => {return parseInt(value, 10) || 0} },
-                income: {title: 'Annual Income', value: '123456789101112', validate: (value) => {return parseInt(value, 10) || 0} }*/
             },
             loanForm: {
                 
@@ -230,24 +176,37 @@ class NewApplicant extends Component {
         },
         { redirectToLoanDetails, statusMessage } = this.state;
         return (
-        
-        <div class="card mb-2 col-md-8 create-list-left mar-bot-50">
-        <div class="form-group">
-            <div> 
-                <h5 class=" mb-0 py-2 font-weight-light">{props.moduleTitle}</h5>
-            </div>
-            <div id="body-create" class="" aria-labelledby="header-create">
-                <div class="card-body">
-                    <ContractForm
-                        { ...props }
-                        onCompilationComplete = { this.onCompilationComplete }
-                        onContractCreated = { this.onNewApplicantCreated } />
-                        { redirectToLoanDetails && 
-                               window.location.assign(redirectToLoanDetails)
-                        }
+        <div>
+            <div className="menu-bar col-md-12">
+                <div className="row">
+                        <div className="col-md-9">
+                            <div className="">
+                                    <span className="text-white"> Applications > Create Loan</span>
+                            </div>
+                            <div className="col-md-6 pull-right"> &nbsp; </div>
+                        </div>
+                    <div className="col-md-3 pull-right">  
+                        <div className="pull-right text-white">
+                            <img src={currencyImage} className="" alt="" /> 
+                            &nbsp;  Balance : 
+                            ( { BlockChain.getUserBalance(this.accountId)} Tokens)
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+            <div className="card mb-2 col-md-8 create-list-left mar-bot-50">
+                <div id="body-create" className="" aria-labelledby="header-create">
+                    <div className="">
+                        <ContractForm
+                            { ...props }
+                            onCompilationComplete = { this.onCompilationComplete }
+                            onContractCreated = { this.onNewApplicantCreated } />
+                            { redirectToLoanDetails && 
+                                window.location.assign(redirectToLoanDetails)
+                            }
+                    </div>
+                </div>
+            </div>
         </div>
         );
     }

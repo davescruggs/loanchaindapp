@@ -3,7 +3,9 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 //import background from './modules/img/background.png';
 import background from './modules/img/login_bg.jpg';
 import logo from './modules/img/logo.png';
-import userAvatar from './modules/img/avatar.jpg';
+import userAvatar from './modules/img/avatar.png';
+import ofslogo from './modules/img/ofs.png';
+import currencyImage from './modules/img/currency.png';
 import './App.css';
 import { web3Connection } from './web3';
 import NewApplicant from './pages/applicant/create';
@@ -22,6 +24,7 @@ import ContractCreate from './pages/bank/contractCreate';
 import Contract from './pages/bank/contract';
 import { BlockChain } from './lib/blockchain';
 import RestApproval from './pages/bank/restApproval';
+import queryString from 'query-string';
 
 const checkAuth = () => {
     const isLoggedIn = JSON.parse(localStorage.getItem('isLoggedIn'));
@@ -35,7 +38,7 @@ const AuthRoute = ({ component: Component, ...rest }) => (
         checkAuth() ? (
             <Component {...props}/>
          ) : (
-             <Redirect to={{ pathname: '/login'}} />
+             <Redirect to={ { pathname: '/login', state: { from: props.location }} } />
          )
     )} />
 )
@@ -63,13 +66,20 @@ class App extends Component {
         }
         this.state = {
             connected: undefined,
-            loggedUser: this.accountname
+            loggedUser: this.accountname,
+            statusGroup: false
         }
         
         console.log("loggedUserInfo", props);
     }
 
     componentDidMount() {
+        let params = queryString.parse(this.props.location);
+        console.log("params", params);
+        const location =  window.location.pathname;
+        if(location == '/banklist' || location == '/loans' || location == '/brokerlist') {
+            this.setState({ statusGroup: true });
+        }
         web3Connection.watch((connected) => {
             this.setState({ connected });
         }).catch()
@@ -99,29 +109,33 @@ class App extends Component {
 
     render() {
 
-        const { connected } = this.state;
+        const { connected, statusGroup } = this.state;
         const styles = {
-            backgroundImage: "url(" + background + ")"
+            //backgroundImage: "url(" + background + ")"
+            backgroundColor: "#F1F2F5"
         },
         { loggedUser } = this.state;
         var redirectURL = '/';
         if(loggedUser && loggedUser == 'broker') {
-            redirectURL = '/brokerlist';
+            redirectURL = '/brokerlist?state=new';
         } else if(loggedUser && loggedUser == 'bank') {
-            redirectURL = '/banklist';
+            redirectURL = '/banklist?state=new';
         } else if(loggedUser && loggedUser != 'broker' && loggedUser != 'bank') {
-            redirectURL = '/loans';
+            redirectURL = '/loans?state=new';
         } else {
             //localStorage.setItem('accountInfo', JSON.stringify(content));
             redirectURL = '/login';
         }
+
         console.log("loggedUser ", loggedUser);
         return (
             <div className="main pb-3" style={styles}>
-                <nav className="navbar navbar-expand-lg navbar-dark bg-dark py-2 py-lg-0" role="navigation">
+                <nav className="navbar navbar-expand-lg bg-dark py-2 py-lg-0" role="navigation">
+                    <img src={ofslogo} alt="" className="float-left mr-2 " />
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="#">
-                            <img src={logo} alt="" className="float-left mr-2" />Loan Management private blockchain
+                        <a className="navbar-brand col-md-4" href="#">
+                            <img src={logo} alt="" className="float-left mr-2 " />
+                            <span class="header-title">OFS Loan Management Portal</span>
                         </a>
                         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
@@ -129,46 +143,49 @@ class App extends Component {
                         <div className="collapse navbar-collapse" id="navbar-collapse">
                             <ul className="navbar-nav mt-2 mx-lg-3 my-lg-0 font-weight-light">
                                 {(loggedUser != 'broker' && loggedUser != 'bank' &&
-                                <li className="nav-item active">
-                                    <a href="/loans" className="nav-link p-2 p-lg-3">Loans</a>
+                                <li className="nav-item loan-text">
+                                    <a href="/loans?state=new" className="nav-link p-2 p-lg-3">Loans</a>
                                 </li>
                                 )}
                                 {(loggedUser == 'broker' &&
-                                <li className="nav-item active">
-                                    <a href="/brokerlist" className="nav-link p-2 p-lg-3">Applicants</a>
+                                <li className="nav-item loan-text">
+                                    <a href="/brokerlist?state=new" className="nav-link p-2 p-lg-3">Applications</a>
                                 </li>
                                 )}
                                 {(loggedUser == 'bank' &&
-                                <li className="nav-item active">
-                                    <a href="/banklist" className="nav-link p-2 p-lg-3">Applicants</a>
+                                <li className="nav-item loan-text active">
+                                    <a href="/banklist?state=new" className="nav-link p-2 p-lg-3">Applications</a>
                                 </li> 
                                 )}
                                 {(loggedUser == 'bank' &&
-                                <li className="nav-item active">
+                                <li className="nav-item loan-text">
                                     <a href="/contractlist" className="nav-link p-2 p-lg-3">Loan Programs</a>
                                 </li>
                                 )}
                             </ul>
                         </div>
                         {(checkAuth() &&
-                        <div className="dropdown">
-                                <img src={userAvatar} className="user-image" alt="User Image" />
-                                <span className="user-login-name"> 
-                                { this.accountname } ( { BlockChain.getUserBalance(this.accountId)} ETH)
-                                </span>
-                                
-                                <span className="dropdown-content">
-                                    <a href="#" className="logout" onClick={this.logout}>
-                                    <i className="fa fa-sign-out"></i> 
-                                        <i className="fas fa-sign-out-alt"></i>Logout
-                                    </a>
-                                </span>
+                        <div class="dropdown">
+                            <div class="dropdown-toggle" data-toggle="dropdown">
+                                <img src={userAvatar} className="" alt="User Image" />
+                                <a href="#" className="user-login-name">{ this.accountname }  <span class="caret"></span></a>
+                            </div>
+                            <ul class="dropdown-menu">
+                                <li class="user-header">
+                                    <img src={userAvatar} class="img-circle" alt="User Image" />
+                                    <p className="user-login-name"> { this.accountname }</p>
+                                </li>
+                                <li class="user-footer text-center ">
+                                    <div>
+                                        <a href="#" onClick={this.logout} class="btn btn-default btn-flat ">Sign out</a>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                         )}
                     </div>
                 </nav>
-
-                <div className="mt-4">
+                <div className="">
                     <BrowserRouter>
                         <Switch>
                             { (checkAuth) &&

@@ -174,6 +174,10 @@ export const BlockChain = {
         return web3.toWei(amount, "ether");
     },
 
+    getEtherFromPrice: function(amount) {
+        return web3.fromWei(amount, "ether");
+    },
+
     deployContractFromABI: function(contractInput, result, onUpdateContract, gasPrice, gasEstimate, contractName, fromAccountAddress) {
         
         

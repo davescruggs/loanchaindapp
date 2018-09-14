@@ -75,15 +75,24 @@ class Auth extends Component {
             });
             content = await rawResponse.json();
             localStorage.setItem('accountInfo', JSON.stringify(content));
+            let redirect = localStorage.getItem("redirectUrl");
+            console.log("redirect ", redirect);
             if (content.accountName != undefined && content.accountName == "bank") {
                 localStorage.setItem('isLoggedIn', true);
-                this.setState({ referrer: '/banklist' }, { authenticated: true } );
+                const redirectURL = redirect && redirect != '/undefined' ? redirect : '/banklist?state=new';
+                this.setState({ referrer: redirectURL }, { authenticated: true } );
+                localStorage.setItem("redirectUrl", null);
             } else if(content.accountName != undefined && content.accountName == "broker") {
                 localStorage.setItem('isLoggedIn', true);
-                this.setState({ referrer: '/brokerlist', authenticated: true });
+                const redirectURL = redirect && redirect != '/undefined' ? redirect : '/brokerlist?state=new';
+                this.setState({ referrer: redirectURL, authenticated: true });
+                localStorage.setItem("redirectUrl", null);
             } else if(content.accountName != undefined) {
                 localStorage.setItem('isLoggedIn', true);
-                this.setState({ referrer: '/loans', authenticated: true });
+                const redirectURL = redirect && redirect != '/undefined' ? redirect : '/loans?state=new';
+                console.log("redirectURL ", redirectURL);
+                this.setState({ referrer: redirectURL, authenticated: true });
+                localStorage.setItem("redirectUrl", null);
                 <Redirect to={{ pathname: '/loans'}} />
             } else {
                 this.setState({ errorMessage: 'Username or Password is not invalid' });
@@ -119,6 +128,12 @@ class Auth extends Component {
         );
         console.log(this.state.usersInfo, "User Details");
     }
+    componentDidMount() {
+        const { from } = this.props.location.state || { from: { pathname: "/" } };
+        const pathname = from.pathname+from.search;
+        console.log("Pathname", pathname)
+        localStorage.setItem("redirectUrl", pathname);
+    }
 
     render() {
         const props = {
@@ -127,7 +142,7 @@ class Auth extends Component {
         if (this.state.referrer) return window.location.assign(this.state.referrer);
         return (
 
-            <div class="card mb-2 centered-box">
+            <div class="mb-2 centered-box">
                 <div class="card-header" id="header-create" data-toggle="collapse" data-target="#body-create" aria-expanded="false" aria-controls="body-create">
                     <p class="mb-0 py-2 font-weight-light">
                         <i class="icon-folder-create"></i> {props.moduleTitle}
