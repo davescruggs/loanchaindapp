@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'build')))
 var baseURL = '';
 
 app.get('/urltouse', function(req, res) {
-   console.log("urltouse RETURNING::"+req.app.locals.blockchainurl);
+    console.log("urltouse RETURNING::"+req.app.locals.blockchainurl);
     res.send(req.app.locals.blockchainurl);
 });
 
@@ -114,7 +114,7 @@ app.get('/banklist', function(req, res){
         path = req.params[0] ? req.params[0] : 'index.html';
     res.sendFile(path, {root: './build'});
 });
-app.post('/update/events', function(req, res){
+app.post('/update/events', async function(req, res){
 
     var requestData = req.body;
     var organization = req.query.org;
@@ -122,20 +122,52 @@ app.post('/update/events', function(req, res){
     console.log("requestData For Saleforce updation ", requestData);
     console.log("organization ", organization);
     var salesforeceAccessToken = process.env['SALESFORCE_'+organization+'_ACCESS_TOKEN'];
+    //var salesforceCredentials = process.env['SALESFORCE_'+organization+'_CREDENTIALS'];
     var salesforeceURL = process.env['SALESFORCE_'+organization+'_URL'];
+    var sfCredentials = Buffer.from(salesforeceAccessToken, 'base64').toString('ascii');
+    var credentials = sfCredentials.split(":");
+    var accessToken = await getAccessToken(salesforeceURL, credentials[0], credentials[1], credentials[2], credentials[3], requestData);
     console.log("requestData For salesforeceURL ", salesforeceURL);
-    console.log("requestData For salesforeceAccessToken ", salesforeceAccessToken);
-    request.post(
+    console.log("requestData For credentials ", credentials);
+    res.status(200);
+    res.send('Event published');
+});
+
+async function getAccessToken(url, clientId, clientSecret, username, password, requestData) {
+
+    var salesforceCredentialsURL = url+'/services/oauth2/token?grant_type=password&client_id='+clientId+'&client_secret='+clientSecret+'&username='+username+'&password='+password;
+    console.log("salesforceCredentialsURL", salesforceCredentialsURL);
+    await request.post({
+            "headers": 
+            { 
+                "content-type": "application/json" ,
+            },
+            "url": salesforceCredentialsURL
+        }, (error, response) => {
+            if(error)  {
+               console.log('Error: '+error);
+            } else {
+                const accessToken = JSON.parse(response.body);
+                console.log("getAccessToken : "+ accessToken.access_token);
+                updatePlatFormEvents(url, accessToken.access_token, requestData)
+            }
+    });
+}
+
+async function updatePlatFormEvents(salesforeceURL, accessToken, requestData) {
+    console.log("requestData For salesforeceURL ", salesforeceURL);
+    console.log("requestData For requestData ", requestData);
+    console.log("requestData For salesforeceAccessToken ", accessToken);
+    await request.post(
         {
             "headers": 
             { 
                 "content-type": "application/json" ,
-                "Authorization": "Bearer "+salesforeceAccessToken
+                "Authorization": "Bearer "+accessToken
             },
             "url": salesforeceURL+"/services/data/v43.0/sobjects/loanEvent__e/",
             "body": JSON.stringify(requestData)
-        }, (error, response, body) => 
-        {
+        }, (error, response, body) =>  {
             if(error) 
             {
                console.log('Error: '+error);
@@ -144,10 +176,8 @@ app.post('/update/events', function(req, res){
             {
                 console.log("Interest Event Published: "+body);
             }
-    });
-    res.status(200);
-    res.send('Event published');
-});
+        });
+}
 
 console.log("Started on port"+PORT)
 var router = express.Router();

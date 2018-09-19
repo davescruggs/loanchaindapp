@@ -26,6 +26,7 @@ contract Applicant {
     ApplicantAddress private homeAdd;
     int private ssn;
     int private applicantIncome;
+    string private fullAddress;
     address private signedBy;
     mapping (address => Application) public applicationDetails;
     event ApplicationAcknowledged(address from);
@@ -56,7 +57,8 @@ contract Applicant {
                         int _applicantIncome,
                         string _loanType,
                         int _loanAmount,
-                        int _periodInYears) public {
+                        int _periodInYears,
+                        string _fullAddress) public {
 
         applicantName = _applicantName;
         applicantSex = _applicantSex;
@@ -67,6 +69,7 @@ contract Applicant {
         loanType = _loanType;
         loanAmount = _loanAmount;
         periodInYears = _periodInYears;
+        fullAddress = _fullAddress;
         signedBy = msg.sender;
     }
 
@@ -85,8 +88,8 @@ contract Applicant {
     }
 
     //add modified lenderCallOnly to restrict access ONLY to lender
-    function getApplicantDetails() public view  returns(string, string, string, int, int, address) {
-        return (applicantName, applicantSex, applicantDOB, ssn, applicantIncome, signedBy);
+    function getApplicantDetails() public view  returns(string, string, string, int, int, address, string) {
+        return (applicantName, applicantSex, applicantDOB, ssn, applicantIncome, signedBy, fullAddress);
     }
 
     //add modified lenderCallOnly to restrict access ONLY to lender
@@ -143,7 +146,7 @@ contract Loan {
     function Loan(string _name, address _applicantContract, string _type, int _amount, int _periodInYears) public {
         Applicant applicant =  Applicant(_applicantContract);
         applicant.ackApplication(_name, loanProgramAddress);
-        (, , , ssn, applicantIncome, signedBy) = applicant.getApplicantDetails();
+        (, , , ssn, applicantIncome, signedBy, ) = applicant.getApplicantDetails();
         applicantContractAddress = _applicantContract;
         loanType = _type;
         loanAmount = _amount;

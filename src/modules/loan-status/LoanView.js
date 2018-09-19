@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ContractForm from '../../modules/contract-form';
 import ContractFile from '../../modules/resource/loanchain.sol';
 import BlockChain from '../../lib/blockchain';
+import moment  from 'moment';
 
 class LoanView extends Component {
 
@@ -33,8 +34,10 @@ class LoanView extends Component {
             name: '',
             Gender: '',
             dob: '',
+            ssn: '',
             zip: '',
             income: '',
+            fullAddress: '',
             loanProgram: undefined,
             loanProgramName: '',
             editIntrestAndEMI: (props.editIntrestAndEMI === undefined) ? false : props.editIntrestAndEMI,
@@ -107,13 +110,19 @@ class LoanView extends Component {
             console.log("CULPRIT 1");
             BlockChain.getContract(this.compiledObject,':Applicant', loanInfoFound.applicantContractAddress()).then((applicant) => {
                 const applicantInfo = applicant.getApplicantDetails();
+                var securitySsn = parseInt(applicantInfo[3]).toString();
+                var maskedSSN = securitySsn.substring(securitySsn.length - 4);
+                var applicantAddress = applicantInfo[6];
+                const fullAddress = applicantAddress.replace(/-/g, ",");
+                console.log("fullAddress3", fullAddress)
                 this.setState({
                     applicant: applicant,
                     name: applicantInfo[0],
                     Gender: applicantInfo[1],
                     dob: applicantInfo[2],
-                    zip: applicantInfo[3],
-                    income: applicantInfo[4]
+                    ssn: 'XXX-XX-'+maskedSSN,
+                    income: applicantInfo[4],
+                    fullAddress: fullAddress
                 });
 
                 if(onLoanStatusNotified) {
@@ -183,7 +192,7 @@ class LoanView extends Component {
                 goodCredit, loanAmount,
                 loanPeriodInYears, loanProgramAddress,
                 loanType, loanReceived,
-                name, Gender, dob, zip, income, loanProgramName,
+                name, Gender, dob, ssn, income, fullAddress, loanProgramName,
                 editIntrestAndEMI, brokerView, approvedLoanAmount
             } = this.state,
             props = {
@@ -195,7 +204,8 @@ class LoanView extends Component {
                 LoanTitle: 'Loan Info',
                 Loanstatus: 'Choose Loan Program',
             }
-            console.log("state values", parseInt(this.state.income));
+            console.log("state values", dob);
+            var formatedDate = dob.toString().substring(0, 10);
         return (
             <div className="">
                     <div className="page-header">General Infomartion</div>
@@ -216,14 +226,14 @@ class LoanView extends Component {
                             <span className="col-md-8 loan-content-text">{name}</span>
                     </div>
                     
-                    <div className="col-md-12">
+                    <div className="col-md-12 hide">
                             <label className="col-md-4 loan-label">Gender</label>
                             <span className="col-md-8 loan-content-text">{Gender}</span>
                     </div>
                     
                     <div className="col-md-12">
                             <label className="col-md-4 loan-label">DOB</label>
-                            <span className="col-md-8 loan-content-text">{dob}</span>
+                            <span className="col-md-8 loan-content-text">{formatedDate}</span>
                     </div>
                     
                     <div className="col-md-12">
@@ -232,9 +242,15 @@ class LoanView extends Component {
                     </div>
                     
                     <div className="col-md-12">
-                            <label className="col-md-4 loan-label">Zip</label>
-                            <span className="col-md-8 loan-content-text">{ (zip) ? parseInt(zip) : ''}</span>
+                            <label className="col-md-4 loan-label">SSN</label>
+                            <span className="col-md-8 loan-content-text">{ ssn }</span>
                     </div>
+                    {( fullAddress && 
+                    <div className="col-md-12">
+                            <label className="col-md-4 loan-label">Address</label>
+                            <span className="col-md-8 loan-content-text">{ fullAddress }</span>
+                    </div>
+                    )}
                     <div className="page-header">Loan Infomartion</div>
                         <div className="col-md-12">
                                 <label className="col-md-4 loan-label">Loan Reference</label>

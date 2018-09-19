@@ -5,6 +5,7 @@ import LoanView from '../../modules/loan-status/LoanView';
 import { web3 } from '../../web3';
 import currencyImage from '../../modules/img/currency.png';
 import queryString from 'query-string';
+import Services from '../../lib/services';
 
 class Manage extends Component {
 
@@ -30,6 +31,7 @@ class Manage extends Component {
             creditStatus: undefined,
             applicantDetails: '',
             fromAccountAddress: this.accountId,
+            loanHistories: ''
         }
 
         //TODO find the right way to find the key from search
@@ -41,6 +43,7 @@ class Manage extends Component {
         this.approvalType = params.type;
         this.applicantName = params.applicantName;
         this.organization = params.org;
+        this.transHash = params.tx;
         console.log("organization", this.organization)
         
         this.onCompilationComplete = this.onCompilationComplete.bind(this);
@@ -55,6 +58,7 @@ class Manage extends Component {
         }
         this.getApplicantDetails = this.getApplicantDetails.bind(this);
         this.getApplicantDetails();
+        this.getLoanHistory(this.loanAddress);
         console.log("this Acc name", this.applicantAccountName);
         console.log("this App", this.applicantAddress);
     }
@@ -64,26 +68,46 @@ class Manage extends Component {
         this.compiledObject = compiledObject;
     }
 
+    async componentDidMount(){
+        /* await this.getLoanHistory(this.loanAddress);
+        const { loanHistories } = this.state;
+        console.log('loanHistories ', loanHistories);
+        if(this.organization != '' && this.organization !=undefined && (loanHistories == '' || loanHistories == undefined)) {
+            let loanHistoryInfo = {};
+            loanHistoryInfo.createdHash = this.transHash;
+            loanHistoryInfo.appliedHash = this.transHash;
+            loanHistoryInfo.creditStatusTrans = [];
+            loanHistoryInfo.monthlyPayTrans = [];
+            loanHistoryInfo.approveLoanTrans = '';
+            console.log('loanHistoryInfo ', loanHistoryInfo);
+            const loanHistory = {[this.loanAddress] : loanHistoryInfo}
+            this.updateLoanHistory(loanHistory);
+        }
+        
+       console.log("contractDetails ", this.state.contractDetails); */
+    }
+
     onUpdateCredit(creditStatus) {
 
-        const { loanInfo } = this.state,
+        const { loanInfo, loanHistories } = this.state,
             creditStatusMessage = creditStatus ? 'Good credit updated!!!' : 'Good credit declined';
 
         this.setState({ lockOperation: true, progress: 'Processing credit' })
-
+        
+        console.log("loanHistoryId contract loanHistoryId", loanHistories);
         return new Promise((resolve, reject) => {
 
             this.resolveUpdateCredit = resolve;
             console.log("NEW CULPRIT 1");
             BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
               console.log("NEW CULPRIT 2");
-                loanInfo.updateCreditStatus(creditStatus,
+               const creditUpdateHash = loanInfo.updateCreditStatus(creditStatus,
                     {from: BlockChain.fromAccount(), data: byteCode, gas:inflatedGas},
                     (error, contract) => {
                         if(error) {
                             reject(error);
                         } else {
-                            if(this.organization != '') {
+                            if(this.organization != ''  && this.organization != undefined) {
                                 const creditInfo = creditStatus ? "Approved" : "Rejected";
                                 BlockChain.getContract(this.compiledObject,':Applicant', loanInfo.applicantContractAddress()).then((applicant) => {
                                     const applicantName = applicant.getApplicantDetails()[0];
@@ -95,6 +119,13 @@ class Manage extends Component {
                                     }
                                     this.updatePlatformEvents(creditStatusInfo);
                                 });
+                            }
+                            if(loanHistories) {
+                                var loanHistoryId = Object.keys(loanHistories);
+                                var creditTransactHash = loanHistories[loanHistoryId].creditStatusTrans ? loanHistories[loanHistoryId].creditStatusTrans : [];
+                                loanHistories[loanHistoryId].creditStatusTrans = creditTransactHash;
+                                creditTransactHash.push(contract);
+                                this.updateLoanHistory(loanHistories);
                             }
                             this.resolveUpdateCreditMessage = creditStatusMessage;
                         }
@@ -116,10 +147,10 @@ class Manage extends Component {
 
     onApproveLoan() {
 
-        const { loanInfo, approvedLoanAmount, applicantDetails, fromAccountAddress } = this.state;
+        const { loanInfo, approvedLoanAmount, applicantDetails, fromAccountAddress, loanHistories } = this.state;
 
         this.setState({ lockOperation: true, progress: 'Processing loan approval' })
-        
+        var loanHistoryId = Object.keys(loanHistories);        
         return new Promise((resolve, reject) => {
             this.resolveApproveLoan = resolve;
             BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
@@ -138,6 +169,8 @@ class Manage extends Component {
                                 console.log("applicantDetails ", applicantDetails);
                                 this.resolveApproveLoanMessage = 'Loan approved successfully!!!';
                                 let applicantLists = '';
+                                loanHistories[loanHistoryId].approveLoanTrans = contract;
+                                this.updateLoanHistory(loanHistories);
                                 if (applicantDetails) {
                                     applicantLists = Object.values(applicantDetails); 
                                     for (let i in applicantLists) {
@@ -214,10 +247,10 @@ class Manage extends Component {
 
     onSaveIntrestAndEMI() {
 
-        const { loanInfo, estimatedEMI,  estimatedIntrestRate} = this.state;
+        const { loanInfo, estimatedEMI,  estimatedIntrestRate, loanHistories} = this.state;
 
         this.setState({ lockOperation: true, progress: 'Processing emi and interest rate' })
-
+        
         this.setState({
             onSaveData: ((state) => {
 
@@ -237,7 +270,7 @@ console.log("NEW CULPRIT 5");
                                     reject(error);
                                 } else {
                                     
-                                    if(this.organization != ''){
+                                    if(this.organization != '' && this.organization != undefined){
                                         
                                         BlockChain.getContract(this.compiledObject,':Applicant', loanInfo.applicantContractAddress()).then((applicant) => {
                                         const applicantName = applicant.getApplicantDetails()[0];
@@ -251,6 +284,15 @@ console.log("NEW CULPRIT 5");
                                         }
                                         this.updatePlatformEvents(monthlyPaymentInfo);
                                         })
+                                    }
+
+                                    if(loanHistories) {
+                                        var loanHistoryId = Object.keys(loanHistories);
+                                        var loanHistoryId = Object.keys(loanHistories);
+                                        var monthlyPayTransactHash = loanHistories[loanHistoryId].monthlyPayTrans!= undefined && loanHistories[loanHistoryId].monthlyPayTrans ? loanHistories[loanHistoryId].monthlyPayTrans : [];
+                                        monthlyPayTransactHash.push(contract);
+                                        loanHistories[loanHistoryId].monthlyPayTrans = monthlyPayTransactHash;
+                                        this.updateLoanHistory(loanHistories);
                                     }
                                     this.resolveAddDisclosureMessage = 'Estimated Interest Rate and Estimated EMI saved successfully!!!';
                                 }
@@ -349,6 +391,53 @@ console.log("NEW CULPRIT 5");
           })();
     }
 
+   async getLoanHistory() {
+       await Services.getLoanHistory(this.loanAddress).then(
+            response => {
+                console.log("response", response)
+                this.setState({ loanHistories : response })
+                if(response == '') {
+                    this.createTransHistory();
+                }
+            }
+        ).catch((err) => {
+            console.log("error", err);
+        });
+        console.log("loanHistories", this.state.loanHistories)
+    }
+
+    async createTransHistory(){
+        
+        const { loanHistories } = this.state;
+        console.log('loanHistories ', loanHistories);
+        if(this.organization != '' && this.organization != undefined) {
+            let loanHistoryInfo = {};
+            loanHistoryInfo.createdHash = this.transHash;
+            loanHistoryInfo.appliedHash = this.transHash;
+            loanHistoryInfo.creditStatusTrans = [];
+            loanHistoryInfo.monthlyPayTrans = [];
+            loanHistoryInfo.approveLoanTrans = '';
+            console.log('loanHistoryInfo ', loanHistoryInfo);
+            const loanHistory = {[this.loanAddress] : loanHistoryInfo}
+            this.updateLoanHistory(loanHistory);
+        }
+    }
+
+    updateLoanHistory(loanHistory) {
+        (async () => {
+            const rawResponse = await fetch(this.baseURL+'/loanhistory/create/', {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(loanHistory)
+            });
+            const content = await rawResponse.json();
+            console.log("rawResponse", content);
+          })();
+    }
+
     render() {
 
         const {
@@ -438,8 +527,8 @@ console.log("NEW CULPRIT 5");
                 )}
                 <br />
                 <div className="text-center">
-                        {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success col-md-8 btn-style" value = "Edit Interest and EMI" disabled = { operationDisabled } />}
-                        {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success col-md-8 btn-style" value = "Save Interest and EMI" disabled = { operationDisabled } />}
+                        {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success col-md-8 btn-style" value = "Edit Interest & Monthly Payments" disabled = { operationDisabled } />}
+                        {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success col-md-8 btn-style" value = "Save Interest & Monthly Payments" disabled = { operationDisabled } />}
                         <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-success col-md-8 btn-style" value = "Approve Credit" disabled = { operationDisabled } />
                         <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-success col-md-8 btn-style" value = "Decline Credit" disabled = { operationDisabled } />
                         <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-success col-md-8 btn-style" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />

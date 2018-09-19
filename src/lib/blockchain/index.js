@@ -276,6 +276,37 @@ export const BlockChain = {
 
     },
 
+    getTransactionInfo : function(transactionHash, type) {
+        console.log("transactionHash", transactionHash, type);
+
+        try {
+            if(transactionHash != undefined && transactionHash != '') {
+                const transaction = web3.eth.getTransaction(transactionHash);
+                const blockInfo = web3.eth.getBlock(transaction.blockNumber);
+                blockInfo.input = transaction.input;
+                blockInfo.type = type ? type : '';
+                blockInfo.from = transaction.from;
+                blockInfo.to = transaction.to;
+                blockInfo.value = transaction.value;
+                blockInfo.transaction = transactionHash;
+                blockInfo.gasPrice = transaction.gasPrice;
+                console.log("transaction Hash", transaction);
+                return blockInfo;
+            }
+        } catch (error) {
+                console.log( "getUserBalance ", error)
+        }
+        return "";     
+    },
+
+    getTotalBlocks() {
+        try {
+            return web3.eth.blockNumber;
+        } catch (error) {
+            console.log( "Block Error ", error)
+        }
+    },
+
     getGasPriceAndEstimateFromABI: function(result, contractName) {
 
         return new Promise((resolve, reject) => {

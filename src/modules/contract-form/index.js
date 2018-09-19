@@ -210,6 +210,7 @@ class ContractForm extends Component {
                 statusMessage: 'Compiling and deploying contract',
                 isDeployInProgress: true
             });
+            applicantContractInput.push('');
             console.log("contractInput contractInput", contractInput);
             console.log("contractInput applicantContractInput", applicantContractInput);
             BlockChain.getGasPriceAndEstimate(compilationResult, contractName).then(({gasPrice, gasEstimate}) => {
@@ -286,7 +287,7 @@ class ContractForm extends Component {
                         <div className="">
                         { (options) &&
                             options.map((option) => {
-                                return <label className="radio-inline" onChange = { this.onDataChange.bind(this, item) }>
+                                return <label className="radio-inline loan-label" onChange = { this.onDataChange.bind(this, item) }>
                                         <input type="radio" className="radio" value={option} name="gender" /> {option} 
                                 </label>
                             })

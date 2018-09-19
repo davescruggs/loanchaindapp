@@ -37,6 +37,7 @@ class NewApplicant extends Component {
     }
     onNewApplicantCreated(applicantContract, componentState) {
         const { existingApplicantInfo } = this.state;
+        console.log("onNewApplicantCreated applicantContract", applicantContract)
         BlockChain.getContract(this.compiledObject,':Applicant', applicantContract.address).then((applicant) => {
             
             const applicantInfo = applicant.getApplicantDetails();
@@ -56,6 +57,7 @@ class NewApplicant extends Component {
                 loanPeriod: loanInfo[2],
                 status: "New",
                 loanAddress:"",
+                transactionHash:applicantContract.transactionHash
             }]
             let finalObj;
             let accountname = this.state.accountName;
@@ -154,7 +156,7 @@ class NewApplicant extends Component {
                     personal: {title: 'Perosnal Information: ', inputType: 'label', styleclass: 'mar-bot0'},
                     firstName: {title: 'First name' , value: 'firstname', inputType: 'text'},
                     lastName: {title: 'Last name' , value: 'lastname', inputType: 'text'},
-                    Gender: {title: 'Gender', value: 'Gender', inputType: 'radio', options:['Male', 'Female']},
+                    Gender: {title: 'Gender', value: 'Gender', inputType: 'radio', options:['Male', 'Female', 'Other']},
                     dob: {title: 'DOB', inputType: 'date', value:this.state.dob},
                     contact: {title: 'Contact Information: ', inputType: 'label', styleclass: 'mar-bot0'},
                     street1: {title: 'Street 1', value: 'street1'},

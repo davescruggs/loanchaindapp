@@ -3,7 +3,8 @@ import { Redirect } from 'react-router';
 
 export const Services = {
 
-    baseURL: window.location.origin,
+    //baseURL: window.location.origin,
+    baseURL:  window.location.host.indexOf('localhost') == 0 ? 'http://localhost:7000': '',
     
     getApplicantDetails: async function () {
         
@@ -31,5 +32,17 @@ export const Services = {
             console.log("Weeo", error);
         }
     },
+
+    async getLoanHistory(loanReference) {
+        let loanHistories = '';
+        console.log("BASE URL", this.baseURL);
+        await fetch(this.baseURL+'/loanhistory/'+ loanReference).then(
+            response => response.json() ).then(
+            resulstData =>   loanHistories = resulstData
+        ).catch((err) => {
+            console.log("error", err);
+        });
+        return loanHistories;
+    }
 }
 export default Services;

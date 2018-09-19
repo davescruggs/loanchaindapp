@@ -208,21 +208,24 @@ class ApplicantView extends Component {
         
         if(loanProgram.address) {
             try {
+                let loanTransactionHash = '';
                 BlockChain.getInflatedGas(this.compiledObject, ':LoanProgram').then(({inflatedGas, byteCode}) => {
                     console.log('loanProgram submitLoanApplication', loanProgram);
-                        loanProgram.apply(applicant.address,
-                            loanType,
-                            parseInt(loanAmount,10),
-                            parseInt(loanPeriodInYears,10),
-                            {from: userAccountId, data: byteCode, gas:inflatedGas}
-                        );
-                        this.resolveSubmitLoan = true;
-        
+                    loanTransactionHash = loanProgram.apply(applicant.address,
+                                                loanType,
+                                                parseInt(loanAmount,10),
+                                                parseInt(loanPeriodInYears,10),
+                                                {from: userAccountId, data: byteCode, gas:inflatedGas}
+                                              );
+                    this.resolveSubmitLoan = true;
                 });
+                console.log('loanProgram loanTransactionHash', loanTransactionHash);
+
                 loanProgram.ApplicationCreated((error, loanContract) => {
                     console.log('loanContract', loanContract);
 
                     let applicantLists = '';
+                    let loanHistories = {};
                     if (applicantDetails) {
                         applicantLists = Object.values(applicantDetails); 
                         for (let i in applicantLists) {
@@ -230,6 +233,14 @@ class ApplicantView extends Component {
                                 if(applicantLists[i][j].applicantAddress == applicant.address){
                                     applicantLists[i][j].loanAddress = loanContract.args.contractAddress;
                                     applicantLists[i][j].status = "Inprogress";
+                                    loanHistories.createdHash = applicantLists[i][j].transactionHash;
+                                    loanHistories.appliedHash = loanTransactionHash;
+                                    loanHistories.creditStatusTrans = [];
+                                    loanHistories.monthlyPayTrans = [];
+                                    loanHistories.approveLoanTrans = '';
+                                    console.log('loanHistoriesloanHistories', loanHistories);
+                                    const loanHistory = {[loanContract.args.contractAddress] : loanHistories}
+                                    this.updateLoanHistory(loanHistory);
                                 }
                             }
                         }
@@ -300,6 +311,21 @@ class ApplicantView extends Component {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify(loanAppInfo)
+            });
+            const content = await rawResponse.json();
+            console.log("rawResponse", content);
+          })();
+    }
+
+    updateLoanHistory(loanHistory) {
+        (async () => {
+            const rawResponse = await fetch(this.baseURL+'/loanhistory/create/', {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(loanHistory)
             });
             const content = await rawResponse.json();
             console.log("rawResponse", content);

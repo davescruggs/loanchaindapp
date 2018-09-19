@@ -9,6 +9,7 @@ var url = require('url');
  */
 var keyMap={};
 var keyMapContract=[];
+var loanKeyMap={};
 var IndexRoute = (function () {
     function IndexRoute() {
     }
@@ -144,6 +145,30 @@ var IndexRoute = (function () {
                 res.status(500);
                 res.json(err);
             }
+        });
+
+        router.post("/loanhistory/create", async function (req, res, next) {
+            console.log("POST CALL Contract");
+            var body = '';
+            var requestData = '';
+            try {
+                requestData = req.body;//JSON.parse(body);
+                var loanReference = Object.keys(requestData);
+                loanKeyMap[loanReference]= requestData;
+                res.status(200);
+                res.json(loanKeyMap[loanReference]);
+            } catch (err) {
+                console.log("Console loanhistory Error ", err);
+                res.status(500);
+                res.json(err);
+            }
+        });
+
+        router.get("/loanhistory/:reference/", function (req, res, next) {
+            var requestParams = req.params;
+            var loanReference = requestParams.reference;
+            console.log("loanReference", loanReference);
+            res.status(200).json(loanKeyMap[loanReference]);
         });
 
     };

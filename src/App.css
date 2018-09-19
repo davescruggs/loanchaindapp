@@ -50,6 +50,14 @@ h5, h6 {
     padding: 18px;
     font-size: 12px;
 }
+
+.menu-bar-contracthistory {
+    background: #A5241C;
+    height: 55px;
+    padding: 18px;
+    font-size: 12px;
+}
+
 .loan-text {
     color: #37474F;
 }
@@ -105,6 +113,9 @@ li.active {
 }
 .text-white {
     color: #FFFFFF;
+}
+.text-green {
+    color: #15de15 !important;
 }
 
 .module-title {
@@ -448,9 +459,8 @@ li.user-header {
     font-weight: 500;
 }
 .user-image {
-    float: left;
-    width: 25px;
-    height: 25px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     margin-right: 10px;
     margin-top: -2px;

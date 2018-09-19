@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 //import background from './modules/img/background.png';
 import background from './modules/img/login_bg.jpg';
 import logo from './modules/img/logo.png';
+import logoExplorer from './modules/img/logo-exp.png';
 import userAvatar from './modules/img/avatar.png';
 import ofslogo from './modules/img/ofs.png';
 import currencyImage from './modules/img/currency.png';
@@ -25,6 +26,11 @@ import Contract from './pages/bank/contract';
 import { BlockChain } from './lib/blockchain';
 import RestApproval from './pages/bank/restApproval';
 import queryString from 'query-string';
+import bankAvatar from './modules/img/bank.png';
+import brokerAvatar from './modules/img/broker.png';
+import ApplicantLoanHistory from './pages/applicant/view-history';
+import ViewTransaction from './pages/applicant/view-transaction';
+import ContractInfo from './pages/applicant/contract-info';
 
 const checkAuth = () => {
     const isLoggedIn = JSON.parse(localStorage.getItem('isLoggedIn'));
@@ -77,7 +83,7 @@ class App extends Component {
         let params = queryString.parse(this.props.location);
         console.log("params", params);
         const location =  window.location.pathname;
-        if(location == '/banklist' || location == '/loans' || location == '/brokerlist') {
+        if(location == '/viewtransaction' || location == '/transactions' || location == '/contracts') {
             this.setState({ statusGroup: true });
         }
         web3Connection.watch((connected) => {
@@ -114,12 +120,16 @@ class App extends Component {
             //backgroundImage: "url(" + background + ")"
             backgroundColor: "#F1F2F5"
         },
+        
         { loggedUser } = this.state;
         var redirectURL = '/';
+        var avatar = userAvatar;
         if(loggedUser && loggedUser == 'broker') {
             redirectURL = '/brokerlist?state=new';
+            avatar = brokerAvatar;
         } else if(loggedUser && loggedUser == 'bank') {
             redirectURL = '/banklist?state=new';
+            avatar = bankAvatar;
         } else if(loggedUser && loggedUser != 'broker' && loggedUser != 'bank') {
             redirectURL = '/loans?state=new';
         } else {
@@ -127,22 +137,30 @@ class App extends Component {
             redirectURL = '/login';
         }
 
+        let title = 'OFS Loan Management Portal';
+        let bcLogo = logo;
+        if(statusGroup == true) {
+            title = 'OFS Contract Transactions Explorer';
+            bcLogo = logoExplorer;
+        }
+
         console.log("loggedUser ", loggedUser);
+        console.log("statusGroup ", statusGroup);
         return (
             <div className="main pb-3" style={styles}>
                 <nav className="navbar navbar-expand-lg bg-dark py-2 py-lg-0" role="navigation">
                     <img src={ofslogo} alt="" className="float-left mr-2 " />
                     <div className="container-fluid">
                         <a className="navbar-brand col-md-4" href="#">
-                            <img src={logo} alt="" className="float-left mr-2 " />
-                            <span class="header-title">OFS Loan Management Portal</span>
+                            <img src={bcLogo} alt="" className="float-left mr-2 " />
+                            <span class="header-title">{title}</span>
                         </a>
                         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
                         <div className="collapse navbar-collapse" id="navbar-collapse">
                             <ul className="navbar-nav mt-2 mx-lg-3 my-lg-0 font-weight-light">
-                                {(loggedUser != 'broker' && loggedUser != 'bank' &&
+                                {(loggedUser != 'broker' && loggedUser != 'bank' && statusGroup == false &&
                                 <li className="nav-item loan-text">
                                     <a href="/loans?state=new" className="nav-link p-2 p-lg-3">Loans</a>
                                 </li>
@@ -164,15 +182,15 @@ class App extends Component {
                                 )}
                             </ul>
                         </div>
-                        {(checkAuth() &&
+                        {(checkAuth() && statusGroup == false &&
                         <div class="dropdown">
                             <div class="dropdown-toggle" data-toggle="dropdown">
-                                <img src={userAvatar} className="" alt="User Image" />
+                                <img src={avatar} className="img-circle user-image" alt="User Image" />
                                 <a href="#" className="user-login-name">{ this.accountname }  <span class="caret"></span></a>
                             </div>
                             <ul class="dropdown-menu">
                                 <li class="user-header">
-                                    <img src={userAvatar} class="img-circle" alt="User Image" />
+                                    <img src={avatar} class="img-circle user-image" alt="User Image" />
                                     <p className="user-login-name"> { this.accountname }</p>
                                 </li>
                                 <li class="user-footer text-center ">
@@ -211,6 +229,9 @@ class App extends Component {
                             <AuthRoute exact path='/contractlist' component={Contract} />
                             <AuthRoute exact path='/contractcreate' component={ContractCreate} />
                             <AuthRoute exact path='/restapproval' component={RestApproval} />
+                            <Route exact path='/transactions' component={ApplicantLoanHistory} />
+                            <Route exact path='/viewtransaction' component={ViewTransaction} />
+                            <Route exact path='/contracts' component={ContractInfo} />
                         </Switch>
                     </BrowserRouter>
                 </div>

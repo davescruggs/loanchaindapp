@@ -4,14 +4,18 @@ import axios from 'axios';
 
 
 
-export let blockChainConfiguredLocation = undefined;
-const serverValue = axios.get('/urltouse').then((result) => {
+export let blockChainConfiguredLocation = 'https://ofs-df-blockchain.herokuapp.com/blockchain';
+this.baseURL = '';
+if (window.location.host.indexOf('localhost') == 0) {
+    this.baseURL = 'http://localhost:7000';
+}
+const serverValue = axios.get(this.baseURL+'/urltouse').then((result) => {
     blockChainConfiguredLocation = result.data;
     console.log('blockChainConfiguredLocation', blockChainConfiguredLocation);
 });
 
 export let loanprogramContract = undefined;
-const loanValue = axios.get('/loanProgramToUse').then((result) => {
+const loanValue = axios.get(this.baseURL+'/loanProgramToUse').then((result) => {
     loanprogramContract = result.data;
     console.log('loanprogramContract', loanprogramContract);
 });
