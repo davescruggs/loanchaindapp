@@ -83,7 +83,7 @@ class App extends Component {
         let params = queryString.parse(this.props.location);
         console.log("params", params);
         const location =  window.location.pathname;
-        if(location == '/viewtransaction' || location == '/transactions' || location == '/contracts') {
+        if(location == '/viewtransaction' || location == '/transactions' || location == '/contractexplore') {
             this.setState({ statusGroup: true });
         }
         web3Connection.watch((connected) => {
@@ -231,7 +231,7 @@ class App extends Component {
                             <AuthRoute exact path='/restapproval' component={RestApproval} />
                             <Route exact path='/transactions' component={ApplicantLoanHistory} />
                             <Route exact path='/viewtransaction' component={ViewTransaction} />
-                            <Route exact path='/contracts' component={ContractInfo} />
+                            <Route exact path='/contractexplore' component={ContractInfo} />
                         </Switch>
                     </BrowserRouter>
                 </div>

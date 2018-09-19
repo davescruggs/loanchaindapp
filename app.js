@@ -114,6 +114,21 @@ app.get('/banklist', function(req, res){
         path = req.params[0] ? req.params[0] : 'index.html';
     res.sendFile(path, {root: './build'});
 });
+app.get('/contractexplore', function(req, res){
+    var uid = req.params.uid,
+        path = req.params[0] ? req.params[0] : 'index.html';
+    res.sendFile(path, {root: './build'});
+});
+app.get('/transactions', function(req, res){
+    var uid = req.params.uid,
+        path = req.params[0] ? req.params[0] : 'index.html';
+    res.sendFile(path, {root: './build'});
+});
+app.get('/viewtransaction', function(req, res){
+    var uid = req.params.uid,
+        path = req.params[0] ? req.params[0] : 'index.html';
+    res.sendFile(path, {root: './build'});
+});
 app.post('/update/events', async function(req, res){
 
     var requestData = req.body;
