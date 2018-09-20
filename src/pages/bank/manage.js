@@ -121,10 +121,11 @@ class Manage extends Component {
                                 });
                             }
                             if(loanHistories) {
+                                console.log("loanHistories creditTransactHash", loanHistories);
                                 var loanHistoryId = Object.keys(loanHistories);
-                                var creditTransactHash = loanHistories[loanHistoryId].creditStatusTrans ? loanHistories[loanHistoryId].creditStatusTrans : [];
-                                loanHistories[loanHistoryId].creditStatusTrans = creditTransactHash;
+                                var creditTransactHash = loanHistories[loanHistoryId].creditStatusTrans;
                                 creditTransactHash.push(contract);
+                                loanHistories[loanHistoryId].creditStatusTrans = creditTransactHash;
                                 this.updateLoanHistory(loanHistories);
                             }
                             this.resolveUpdateCreditMessage = creditStatusMessage;
@@ -159,7 +160,7 @@ class Manage extends Component {
                     console.log("try block 1");
                     let approvedEtherAmount = BlockChain.getEtherPrice(parseInt(approvedLoanAmount));
                     //console.log("approvedEtherAmount", approvedEtherAmount);
-                    loanInfo.approveLoan(approvedEtherAmount, {from: fromAccountAddress, data: byteCode, gas:inflatedGas, value: approvedEtherAmount},
+                    loanInfo.approveLoan(approvedLoanAmount, {from: fromAccountAddress, data: byteCode, gas:inflatedGas, value: approvedLoanAmount},
                         (error, contract) => {
                             if(error) {
                                 console.log("NEW error", error);
@@ -212,7 +213,7 @@ class Manage extends Component {
         }).then((result) => {
             
             console.log("result  ", result);
-            this.setState({ approved: true, lockOperation: false, updateInfo: { loanApproved: true }, progress: result })
+            this.setState({ approved: true, lockOperation: false, updateInfo: { loanApproved: true, approvedLoanAmount:approvedLoanAmount }, progress: result })
 
         }).catch((error) => {
             console.log("result error ", error);
@@ -285,16 +286,15 @@ console.log("NEW CULPRIT 5");
                                         this.updatePlatformEvents(monthlyPaymentInfo);
                                         })
                                     }
-
+                                    this.resolveAddDisclosureMessage = 'Estimated Interest Rate and Estimated EMI saved successfully!!!';
                                     if(loanHistories) {
                                         var loanHistoryId = Object.keys(loanHistories);
-                                        var loanHistoryId = Object.keys(loanHistories);
-                                        var monthlyPayTransactHash = loanHistories[loanHistoryId].monthlyPayTrans!= undefined && loanHistories[loanHistoryId].monthlyPayTrans ? loanHistories[loanHistoryId].monthlyPayTrans : [];
+                                        var monthlyPayTransactHash = loanHistories[loanHistoryId].monthlyPayTrans;
+                                        console.log("loanInfo  monthlyPayTransactHash contract", contract);
                                         monthlyPayTransactHash.push(contract);
                                         loanHistories[loanHistoryId].monthlyPayTrans = monthlyPayTransactHash;
                                         this.updateLoanHistory(loanHistories);
                                     }
-                                    this.resolveAddDisclosureMessage = 'Estimated Interest Rate and Estimated EMI saved successfully!!!';
                                 }
                             }
                         );
@@ -377,7 +377,6 @@ console.log("NEW CULPRIT 5");
 
     updatePlatformEvents(loanInfo) {
         (async () => {
-            console.log("creditStatusInfo", loanInfo);
             const loanResponse = await fetch(this.baseURL+'/update/events?org='+this.organization, {
               method: 'POST',
               headers: {
@@ -386,8 +385,8 @@ console.log("NEW CULPRIT 5");
               },
               body: JSON.stringify(loanInfo)
             });
-            const content = await loanResponse.json();
-            console.log("rawResponse", content);
+            /* const content = await loanResponse.json();
+            console.log("rawResponse", content); */
           })();
     }
 
@@ -425,7 +424,7 @@ console.log("NEW CULPRIT 5");
 
     updateLoanHistory(loanHistory) {
         (async () => {
-            const rawResponse = await fetch(this.baseURL+'/loanhistory/create/', {
+            const rawResponse = await fetch('/loanhistory/create/', {
               method: 'POST',
               headers: {
                 'Accept': 'application/json',
@@ -433,8 +432,9 @@ console.log("NEW CULPRIT 5");
               },
               body: JSON.stringify(loanHistory)
             });
-            const content = await rawResponse.json();
-            console.log("rawResponse", content);
+            //const content = await rawResponse.json();
+            //console.log("rawResponse", content);
+            this.getLoanHistory();
           })();
     }
 
@@ -527,11 +527,19 @@ console.log("NEW CULPRIT 5");
                 )}
                 <br />
                 <div className="text-center">
-                        {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success col-md-8 btn-style" value = "Edit Interest & Monthly Payments" disabled = { operationDisabled } />}
-                        {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success col-md-8 btn-style" value = "Save Interest & Monthly Payments" disabled = { operationDisabled } />}
-                        <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-success col-md-8 btn-style" value = "Approve Credit" disabled = { operationDisabled } />
-                        <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-success col-md-8 btn-style" value = "Decline Credit" disabled = { operationDisabled } />
-                        <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-success col-md-8 btn-style" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />
+                        {!editIntrestAndEMI && <input type = "button" onClick = { this.onEditIntrestAndEMI } className = "btn btn-success col-md-10 btn-style" value = "Edit Interest & Monthly Payments" disabled = { operationDisabled } />}
+                        {editIntrestAndEMI && <input type = "button" onClick = { this.onSaveIntrestAndEMI } className = "btn btn-success col-md-10 btn-style" value = "Set Interest & Monthly Payments" disabled = { operationDisabled } />}
+                        <input type = "button" onClick = { this.onUpdateCredit.bind(this, true) } className = "btn btn-success col-md-10 btn-style" value = "Approve Credit" disabled = { operationDisabled } />
+                        <input type = "button" onClick = { this.onUpdateCredit.bind(this, false) } className = "btn btn-success col-md-10 btn-style" value = "Decline Credit" disabled = { operationDisabled } />
+                        <input type = "button" onClick = { this.onApproveLoan } className = "btn btn-success col-md-10 btn-style" value = "Approve Loan" disabled = { operationDisabled || approved || !creditStatus } />
+                </div>
+                <div>
+                    <ul className="list-group list-group-flush list-style-type:square">
+                        <li className="list-group-item">Mortgage request is recorded as a smart contract in blockchain</li>
+                        <li className="list-group-item">The long hexadecimal string you see here are the contract Ids</li>
+                        <li className="list-group-item">DApps call functions on smart contracts to make stage changes</li>
+                        <li className="list-group-item">Every function call is recorded as a transaction in blockchain</li>
+                    </ul>
                 </div>
             </div>
             </div>

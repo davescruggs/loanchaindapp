@@ -42,7 +42,7 @@ app.get('/urltouse', function(req, res) {
 });
 
 app.get(baseURL+'/loanProgramToUse', function(req, res) {
-    console.log("loanProgramToUse RETURNING::"+req.app.locals.loanprogram);
+    //console.log("loanProgramToUse RETURNING::"+req.app.locals.loanprogram);
     res.send(req.app.locals.loanprogram);
 });
 

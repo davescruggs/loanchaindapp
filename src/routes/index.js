@@ -156,6 +156,7 @@ var IndexRoute = (function () {
                 var loanReference = Object.keys(requestData);
                 loanKeyMap[loanReference]= requestData;
                 res.status(200);
+                console.log("requestData Transaction Explore", requestData);
                 res.json(loanKeyMap[loanReference]);
             } catch (err) {
                 console.log("Console loanhistory Error ", err);

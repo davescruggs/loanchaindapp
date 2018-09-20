@@ -306,7 +306,7 @@ class LoanView extends Component {
                         {( loanApproved &&
                             <div className="col-md-12">
                                     <label className="col-md-4 loan-label">Approved Amount</label>
-                                    <span className="col-md-8 loan-content-text">{ (approvedLoanAmount) ? BlockChain.getEtherFromPrice(parseInt(approvedLoanAmount)) : '' }</span>
+                                    <span className="col-md-8 loan-content-text">{ (approvedLoanAmount) ? parseInt(approvedLoanAmount) : '' }</span>
                             </div>
                         )}
                         

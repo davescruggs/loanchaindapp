@@ -278,7 +278,6 @@ export const BlockChain = {
 
     getTransactionInfo : function(transactionHash, type) {
         console.log("transactionHash", transactionHash, type);
-
         try {
             if(transactionHash != undefined && transactionHash != '') {
                 const transaction = web3.eth.getTransaction(transactionHash);
@@ -294,7 +293,7 @@ export const BlockChain = {
                 return blockInfo;
             }
         } catch (error) {
-                console.log( "getUserBalance ", error)
+                console.log( "getTransactionInfo Error ", error);
         }
         return "";     
     },

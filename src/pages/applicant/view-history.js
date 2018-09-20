@@ -27,11 +27,15 @@ class ApplicantLoanHistory extends Component {
     }
 
     async componentDidMount(){
+        this.interval = setInterval(() => this.setState({ time: Date.now() }), 10000);
         await Services.getLoanHistory(this.loanAddress).then(
             response => this.getLoanTransactionDetails(response[this.loanAddress] ))
         .catch((err) => {
             console.log("error", err);
         });
+    }
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     async getLoanTransactionDetails(histories) {
