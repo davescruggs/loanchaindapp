@@ -4,7 +4,7 @@ import axios from 'axios';
 
 
 
-export let blockChainConfiguredLocation = 'https://ofs-df-blockchain.herokuapp.com/blockchain';
+export let blockChainConfiguredLocation = undefined;
 this.baseURL = '';
 if (window.location.host.indexOf('localhost') == 0) {
     this.baseURL = 'http://localhost:7000';
